@@ -23,7 +23,7 @@
             case "authentification":
                 include("Vue/formAuth.php");
                 break;
-            case "connexion":
+            case "utilisateur":
                 include("Controller/UtilisateurController.php");
                 break;
             case "seance": 

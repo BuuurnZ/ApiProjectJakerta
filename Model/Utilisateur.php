@@ -308,6 +308,11 @@ class Utilisateur
         return $data ? $data : null; 
     }
 
+    public static function deconnexion(){
+        unset($_SESSION['user']);
+		unset($_SESSION['autorisation']);
+    }
+
     /**
      * Get the value of nom
      */ 
