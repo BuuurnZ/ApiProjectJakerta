@@ -42,6 +42,4 @@
         echo "Erreur: " . $ex->getMessage();
     }
     
-
-    include("Vue/footer.php");
 ?>

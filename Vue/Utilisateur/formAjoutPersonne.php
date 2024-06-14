@@ -11,7 +11,7 @@ if(!empty($_SESSION['message'])) {
     <div class="m-2 bg-red-200 font-semibold flex justify-center alert alert-success" role="alert" data-auto-dismiss="2000">
         <?php 
             echo($_SESSION["message"]); 
-            unset($_SESSION["message"]); 	
+            unset($_SESSION["message"]);     
         ?>
     </div>
 <?php
@@ -77,14 +77,14 @@ if(!empty($_SESSION['message'])) {
             </div>
         </div>
 
-        <div class="mb-4">
+        <div class="mb-4" id="instruments-container">
             <label class="block text-gray-700 text-sm font-bold mb-2">
                 Instruments
             </label>
-            <ul>
+            <ul id="instruments-list">
                 <?php foreach ($LesInstruments as $instrument) { ?>
                     <li class="mb-2">
-                        <input type="checkbox" id="instrument<?= $instrument->getIDINSTRUMENT() ?>" name="instruments[]" value="<?= $instrument->getIDINSTRUMENT() ?>">
+                        <input type="checkbox" class="instrument-checkbox" id="instrument<?= $instrument->getIDINSTRUMENT() ?>" name="instruments[]" value="<?= $instrument->getIDINSTRUMENT() ?>">
                         <label for="instrument<?= $instrument->getIDINSTRUMENT() ?>"><?= $instrument->getLIBELLE() ?></label>
                     </li>
                 <?php } ?>
@@ -100,3 +100,34 @@ if(!empty($_SESSION['message'])) {
 </div>
 </section>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roleSelect = document.getElementById('role');
+    const instrumentsContainer = document.getElementById('instruments-container');
+    const instrumentCheckboxes = document.querySelectorAll('.instrument-checkbox');
+
+    function updateInstrumentOptions() {
+        const role = roleSelect.value;
+        if (role === '1') { // Admin
+            instrumentsContainer.style.display = 'none';
+            instrumentCheckboxes.forEach(checkbox => checkbox.checked = false);
+        } else if (role === '2') { // Élève
+            instrumentsContainer.style.display = 'block';
+            instrumentCheckboxes.forEach(checkbox => {
+                checkbox.type = 'radio';
+                checkbox.name = 'instruments[]';
+            });
+        } else if (role === '3') { // Professeur
+            instrumentsContainer.style.display = 'block';
+            instrumentCheckboxes.forEach(checkbox => {
+                checkbox.type = 'checkbox';
+                checkbox.name = 'instruments[]';
+            });
+        }
+    }
+
+    roleSelect.addEventListener('change', updateInstrumentOptions);
+    updateInstrumentOptions(); // Initial call to set the correct state
+});
+</script>
