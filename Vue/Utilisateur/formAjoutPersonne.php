@@ -1,101 +1,122 @@
-<div>
 <?php
-    include("Vue/navbar.php");
+include("Vue/navbar.php");
+
 ?>
-    <?php if (!empty($_SESSION['message'])): ?>
-        <div class="m-2 bg-red-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
-            <?php echo $_SESSION['message']; ?>
-        </div>
-        <?php unset($_SESSION['message']); ?>
-    <?php endif; ?>
-    
+
 <section style="background-image: url('Images/music.jpg');" class="bg-cover min-h-screen flex items-center justify-center bg-violet-600">
+    <div class="w-full sm:max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+        <form id="form" class="mt-10" action="index.php?uc=utilisateur&action=inscription" method="post">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
+                    Rôle
+                </label>
+                <select id="role" name="role" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
+                    <option value="" disabled <?php if ($role === "") echo 'selected'; ?>>Sélectionner un rôle</option>
+                    <option value="1" <?php if ($role == 1) echo 'selected'; ?>>Admin</option>
+                    <option value="2" <?php if ($role == 2) echo 'selected'; ?>>Élève</option>
+                    <option value="3" <?php if ($role == 3) echo 'selected'; ?>>Professeur</option>
+                </select>
+                <?php if (!empty($_SESSION['erreurs']['role'])): ?>
+                    <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['role']; ?></p>
+                <?php endif; ?>
+            </div>
 
-    
-
-<div class="w-full sm:max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-    <form id="form" class="mt-10" action="index.php?uc=utilisateur&action=inscription" method="post">
-        <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
-            Rôle
-        </label>
-        <select id="role" name="role" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
-            <option value="1">Admin</option>
-            <option value="2">Élève</option>
-            <option value="3">Professeur</option>
-        </select>
-        </div>
-        <div class="mb-4">
-            <div class="flex flex-wrap -mx-3">
-                <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="nom">
-                        Nom
-                    </label>
-                    <input name="nom" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="nom" type="text" placeholder="Jane" required>
-                </div>
-                <div class="w-full md:w-1/2 px-3">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="prenom">
-                        Prénom
-                    </label>
-                    <input name="prenom" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="prenom" type="text" placeholder="Doe" required>
+            <div class="mb-4">
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="nom">
+                            Nom
+                        </label>
+                        <input name="nom" value="<?php echo htmlspecialchars($nom ?? ''); ?>" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="nom" type="text" placeholder="Jane" required>
+                        <?php if (!empty($_SESSION['erreurs']['nom'])): ?>
+                            <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['nom']; ?></p>
+                        <?php endif; ?>
+                    </div>
+                    <div class="w-full md:w-1/2 px-3">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="prenom">
+                            Prénom
+                        </label>
+                        <input name="prenom" value="<?php echo htmlspecialchars($prenom ?? ''); ?>" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="prenom" type="text" placeholder="Doe" required>
+                        <?php if (!empty($_SESSION['erreurs']['prenom'])): ?>
+                            <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['prenom']; ?></p>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="mail">
-                E-mail
-            </label>
-            <input name="mail" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="mail" type="email" placeholder="user@example.me" required>
-        </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="mail">
+                    E-mail
+                </label>
+                <input name="mail" value="<?php echo htmlspecialchars($mail ?? ''); ?>" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="mail" type="email" placeholder="user@example.me" required>
+                <?php if (!empty($_SESSION['erreurs']['mail'])): ?>
+                    <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['mail']; ?></p>
+                <?php endif; ?>
+            </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="mdp">
-                Mot de passe
-            </label>
-            <input name="mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="mdp" type="password" placeholder="••••••••" required>
-        </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="mdp">
+                    Mot de passe
+                </label>
+                <input name="mdp" value="<?php echo htmlspecialchars($mdp ?? ''); ?>" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="mdp" type="password" placeholder="••••••••" required>
+                <?php if (!empty($_SESSION['erreurs']['mdp'])): ?>
+                    <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['mdp']; ?></p>
+                <?php endif; ?>
+            </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="adresse">
-                Adresse
-            </label>
-            <input name="adresse" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="adresse" type="text" placeholder="24 place de la concorde, 75015 Paris" required>
-        </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="adresse">
+                    Adresse
+                </label>
+                <input name="adresse" value="<?php echo htmlspecialchars($adresse ?? ''); ?>" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="adresse" type="text" placeholder="24 place de la concorde, 75015 Paris" required>
+                <?php if (!empty($_SESSION['erreurs']['adresse'])): ?>
+                    <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['adresse']; ?></p>
+                <?php endif; ?>
+            </div>
 
-        <div class="mb-4">
-            <div class="w-full px-3">
+            <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="telephone">
                     Téléphone
                 </label>
-                <input name="telephone" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="telephone" type="text" placeholder="+0654899585" required>
+                <input name="telephone" value="<?php echo htmlspecialchars($telephone ?? ''); ?>" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="telephone" type="text" placeholder="+0654899585" required>
+                <?php if (!empty($_SESSION['erreurs']['telephone'])): ?>
+                    <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['telephone']; ?></p>
+                <?php endif; ?>
             </div>
-        </div>
 
-        <div class="mb-4" id="instruments-container">
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-                Instruments
-            </label>
-            <ul id="instruments-list">
-                <?php foreach ($LesInstruments as $instrument) { ?>
-                    <li class="mb-2">
-                        <input type="checkbox" class="instrument-checkbox" id="instrument<?= $instrument->getIDINSTRUMENT() ?>" name="instruments[]" value="<?= $instrument->getIDINSTRUMENT() ?>">
-                        <label for="instrument<?= $instrument->getIDINSTRUMENT() ?>"><?= $instrument->getLIBELLE() ?></label>
-                    </li>
-                <?php } ?>
-            </ul>
-        </div>
+            <div class="mb-4" id="instruments-container">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    Instruments
+                </label>
+                <ul id="instruments-list">
+                    <?php if (isset($LesInstruments) && is_array($LesInstruments)): ?>
+                        <?php foreach ($LesInstruments as $instrument): ?>
+                            <li class="mb-2">
+                                <input type="checkbox" class="instrument-checkbox" id="instrument<?= $instrument->getIDINSTRUMENT() ?>" name="instruments[]" value="<?= $instrument->getIDINSTRUMENT() ?>" <?php if (in_array($instrument->getIDINSTRUMENT(), $instruments ?? [])) echo 'checked'; ?>>
+                                <label for="instrument<?= $instrument->getIDINSTRUMENT() ?>"><?= $instrument->getLIBELLE() ?></label>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="text-red-500 text-xs italic">Aucun instrument disponible.</p>
+                    <?php endif; ?>
+                </ul>
+                <?php if (!empty($_SESSION['erreurs']['instruments'])): ?>
+                    <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['instruments']; ?></p>
+                <?php endif; ?>
+            </div>
 
-        <div class="flex justify-center">
-            <button id="submitbtn" class="bg-orange-400 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
-                Ajouter
-            </button>
-        </div>
-    </form>
-</div>
+            <div class="flex justify-center">
+                <button id="submitbtn" class="bg-orange-400 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
+                    Ajouter
+                </button>
+            </div>
+        </form>
+    </div>
 </section>
-</div>
 
+<?php
+unset($_SESSION['erreurs']);
+?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const roleSelect = document.getElementById('role');
