@@ -25,47 +25,54 @@ class Utilisateur
         $this->instruments = $instruments;
         $this->idutilisateur = $idutilisateur; 
     }
-    public static function getAll(){
-        $pdo = MonPdo::getInstance();
-        $req = $pdo->prepare("SELECT * FROM utilisateur");
-        $req->execute();
-        $lesResultats = $req->fetchAll(PDO::FETCH_ASSOC);
-        $utilisateurs = [];
-        foreach ($lesResultats as $resultat) {
-            // Créer un nouvel objet Utilisateur avec les données récupérées
-            $utilisateur = new Utilisateur(
-                
-                $resultat['NOM'],
-                $resultat['PRENOM'],
-                $resultat['TELEPHONE'],
-                $resultat['MAIL'],
-                $resultat['ADRESSE'],
-                $resultat['MDP'],
-                $resultat['EST_ADMIN'],
-                [],
-                $resultat['IDUTILISATEUR']
-            );
-            $utilisateurs[] = $utilisateur;
-        }
 
-        return $utilisateurs;
+    public static function getAll(){
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("SELECT * FROM utilisateur");
+            $req->execute();
+            $lesResultats = $req->fetchAll(PDO::FETCH_ASSOC);
+            $utilisateurs = [];
+            foreach ($lesResultats as $resultat) {
+                // Créer un nouvel objet Utilisateur avec les données récupérées
+                $utilisateur = new Utilisateur(
+                    $resultat['NOM'],
+                    $resultat['PRENOM'],
+                    $resultat['TELEPHONE'],
+                    $resultat['MAIL'],
+                    $resultat['ADRESSE'],
+                    $resultat['MDP'],
+                    $resultat['EST_ADMIN'],
+                    [],
+                    $resultat['IDUTILISATEUR']
+                );
+                $utilisateurs[] = $utilisateur;
+            }
+
+            return $utilisateurs;
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la récupération des utilisateurs : " . $e->getMessage());
+        }
     }
 
     public static function checkConnexion($login, $pw){
-        $req = MonPdo::getInstance()->prepare("SELECT COUNT(*) FROM utilisateur WHERE mail = :login AND mdp = :pw");
-        $req->bindParam(':login', $login);
-        $req->bindParam(':pw', $pw);
-        $req->execute();
-        $nb_lignes = $req->fetchColumn();
+        try {
+            $req = MonPdo::getInstance()->prepare("SELECT COUNT(*) FROM utilisateur WHERE mail = :login AND mdp = :pw");
+            $req->bindParam(':login', $login);
+            $req->bindParam(':pw', $pw);
+            $req->execute();
+            $nb_lignes = $req->fetchColumn();
 
-        return $nb_lignes > 0;
+            return $nb_lignes > 0;
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la vérification de la connexion : " . $e->getMessage());
+        }
     }
   
     public static function ajouterPersonne($utilisateur, $role) {
-        $pdo = MonPdo::getInstance();
-        $pdo->beginTransaction();
-        
         try {
+            $pdo = MonPdo::getInstance();
+            $pdo->beginTransaction();
             
             $req = $pdo->prepare("INSERT INTO UTILISATEUR (NOM, PRENOM, TELEPHONE, ADRESSE, MAIL, MDP, EST_ADMIN)
                                   VALUES (:nom, :prenom, :telephone, :adresse, :mail, :mdp, :est_admin)");
@@ -114,9 +121,8 @@ class Utilisateur
             
             
         } catch (PDOException $e) {
-            
             $pdo->rollback();
-            echo "Erreur lors de l'ajout de l'utilisateur : " . $e->getMessage();
+            throw new Exception("Erreur lors de l'ajout de l'utilisateur : " . $e->getMessage());
         }
     }
 
@@ -133,7 +139,7 @@ class Utilisateur
             echo "Utilisateur supprimé avec succès.";
         } catch (PDOException $e) {
             $pdo->rollback();
-            echo "Erreur lors de la suppression de l'utilisateur : " . $e->getMessage();
+            throw new Exception("Erreur lors de la suppression de l'utilisateur : " . $e->getMessage());
         }
     }
 
@@ -179,7 +185,7 @@ class Utilisateur
                 $reqInstrument->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
                 $reqInstrument->execute();
             }
-
+    
             if ($role != "") {
     
                 if ($role == "ELEVE") {
@@ -189,7 +195,7 @@ class Utilisateur
                         $reqDeleteProfesseur->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
                         $reqDeleteProfesseur->execute();
                     }
-                    
+    
                     // Si l'utilisateur n'était pas déjà élève, on l'ajoute à la table ELEVE
                     if ($ancienRole != $role) {
                         $reqEleve = $pdo->prepare("
@@ -200,7 +206,7 @@ class Utilisateur
                         $reqEleve->execute();
                     }
                 }
-                
+    
                 elseif ($role == "PROFESSEUR") {
                     // Si l'utilisateur était élève, on le supprime de la table ELEVE
                     if ($ancienRole == "ELEVE") {
@@ -208,7 +214,7 @@ class Utilisateur
                         $reqDeleteEleve->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
                         $reqDeleteEleve->execute();
                     }
-                    
+    
                     // Si l'utilisateur n'était pas déjà professeur, on l'ajoute à la table PROFESSEUR
                     if ($ancienRole != $role) {
                         $reqProfesseur = $pdo->prepare("
@@ -225,7 +231,7 @@ class Utilisateur
                     $reqDeleteRoles = $pdo->prepare("
                         DELETE FROM PROFESSEUR
                         WHERE IDUTILISATEUR = :id_utilisateur;
-                        
+    
                         DELETE FROM ELEVE
                         WHERE IDUTILISATEUR = :id_utilisateur;
                     ");
@@ -238,76 +244,83 @@ class Utilisateur
             $pdo->commit();
         } catch (PDOException $e) {
             $pdo->rollback();
-            echo "Erreur lors de la modification de l'utilisateur : " . $e->getMessage();
+            throw new Exception("Erreur lors de la modification de l'utilisateur : " . $e->getMessage());
         }
     }
 
     public static function getUtilisateur($id_utilisateur) {
-        $pdo = MonPdo::getInstance();
-        $req = $pdo->prepare("
-            SELECT U.IDUTILISATEUR, U.NOM, U.PRENOM, U.TELEPHONE, U.ADRESSE, U.MAIL, U.MDP, U.EST_ADMIN,
-                   E.IDELEVE, P.IDPROFESSEUR,
-                   GROUP_CONCAT(I.IDINSTRUMENT SEPARATOR ', ') AS INSTRUMENTS
-            FROM UTILISATEUR U
-            LEFT JOIN ELEVE E ON U.IDUTILISATEUR = E.IDUTILISATEUR
-            LEFT JOIN PROFESSEUR P ON U.IDUTILISATEUR = P.IDUTILISATEUR
-            LEFT JOIN INSTRUMENT_UTILISATEUR IU ON U.IDUTILISATEUR = IU.IDUTILISATEUR
-            LEFT JOIN INSTRUMENT I ON IU.IDINSTRUMENT = I.IDINSTRUMENT
-            WHERE U.IDUTILISATEUR = :id_utilisateur
-            GROUP BY U.IDUTILISATEUR, U.NOM, U.PRENOM, U.TELEPHONE, U.ADRESSE, U.MAIL, U.MDP, U.EST_ADMIN, E.IDELEVE, P.IDPROFESSEUR
-        ");
-        $req->bindParam(':id_utilisateur', $id_utilisateur);
-        $req->execute();
-        $data = $req->fetch(PDO::FETCH_ASSOC);
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("
+                SELECT U.IDUTILISATEUR, U.NOM, U.PRENOM, U.TELEPHONE, U.ADRESSE, U.MAIL, U.MDP, U.EST_ADMIN,
+                    E.IDELEVE, P.IDPROFESSEUR,
+                    GROUP_CONCAT(I.IDINSTRUMENT SEPARATOR ', ') AS INSTRUMENTS
+                FROM UTILISATEUR U
+                LEFT JOIN ELEVE E ON U.IDUTILISATEUR = E.IDUTILISATEUR
+                LEFT JOIN PROFESSEUR P ON U.IDUTILISATEUR = P.IDUTILISATEUR
+                LEFT JOIN INSTRUMENT_UTILISATEUR IU ON U.IDUTILISATEUR = IU.IDUTILISATEUR
+                LEFT JOIN INSTRUMENT I ON IU.IDINSTRUMENT = I.IDINSTRUMENT
+                WHERE U.IDUTILISATEUR = :id_utilisateur
+                GROUP BY U.IDUTILISATEUR, U.NOM, U.PRENOM, U.TELEPHONE, U.ADRESSE, U.MAIL, U.MDP, U.EST_ADMIN, E.IDELEVE, P.IDPROFESSEUR
+            ");
+            $req->bindParam(':id_utilisateur', $id_utilisateur);
+            $req->execute();
+            $data = $req->fetch(PDO::FETCH_ASSOC);
 
-        if ($data) {
+            if ($data) {
+                $instruments = explode(', ', $data['INSTRUMENTS']);
 
-            $instruments = explode(', ', $data['INSTRUMENTS']);
-
-            if ($data['IDELEVE'] !== null) {
-                return new Eleve(
-                    $data['IDELEVE'], $data['NOM'], $data['PRENOM'], $data['TELEPHONE'],
-                    $data['MAIL'], $data['ADRESSE'], $data['MDP'], $data['EST_ADMIN'],
-                    $instruments, $data['IDUTILISATEUR']
-                );
-            } elseif ($data['IDPROFESSEUR'] !== null) {
-                return new Professeur(
-                    $data['IDPROFESSEUR'], $data['NOM'], $data['PRENOM'], $data['TELEPHONE'],
-                    $data['MAIL'], $data['ADRESSE'], $data['MDP'], $data['EST_ADMIN'],
-                    $instruments, $data['IDUTILISATEUR'], $data['IDUTILISATEUR']
-                );
-            } else {
-                return new Utilisateur(
-                    $data['NOM'], $data['PRENOM'], $data['TELEPHONE'],
-                    $data['MAIL'], $data['ADRESSE'], $data['MDP'], $data['EST_ADMIN'],
-                    $instruments, $data['IDUTILISATEUR']
-
-                );
+                if ($data['IDELEVE'] !== null) {
+                    return new Eleve(
+                        $data['IDELEVE'], $data['NOM'], $data['PRENOM'], $data['TELEPHONE'],
+                        $data['MAIL'], $data['ADRESSE'], $data['MDP'], $data['EST_ADMIN'],
+                        $instruments, $data['IDUTILISATEUR']
+                    );
+                } elseif ($data['IDPROFESSEUR'] !== null) {
+                    return new Professeur(
+                        $data['IDPROFESSEUR'], $data['NOM'], $data['PRENOM'], $data['TELEPHONE'],
+                        $data['MAIL'], $data['ADRESSE'], $data['MDP'], $data['EST_ADMIN'],
+                        $instruments, $data['IDUTILISATEUR'], $data['IDUTILISATEUR']
+                    );
+                } else {
+                    return new Utilisateur(
+                        $data['NOM'], $data['PRENOM'], $data['TELEPHONE'],
+                        $data['MAIL'], $data['ADRESSE'], $data['MDP'], $data['EST_ADMIN'],
+                        $instruments, $data['IDUTILISATEUR']
+                    );
+                }
             }
-        }
 
-        return null; // Utilisateur non trouvé
+            return null; // Utilisateur non trouvé
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la récupération de l'utilisateur : " . $e->getMessage());
+        }
     }
 
     public static function recupererRole($id_utilisateur) {
-        $pdo = MonPdo::getInstance();
-        $req = $pdo->prepare("
-            SELECT e.IDELEVE AS ID_ROLE, 'ELEVE' AS ROLE
-            FROM ELEVE e
-            WHERE e.IDUTILISATEUR = :id_utilisateur
-            
-            UNION
-            
-            SELECT p.IDPROFESSEUR AS ID_ROLE, 'PROFESSEUR' AS ROLE
-            FROM PROFESSEUR p
-            WHERE p.IDUTILISATEUR = :id_utilisateur
-        ");
-        $req->bindValue(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
-        $req->execute();
-        $data = $req->fetch(PDO::FETCH_ASSOC);
-        return $data ? $data : null; 
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("
+                SELECT e.IDELEVE AS ID_ROLE, 'ELEVE' AS ROLE
+                FROM ELEVE e
+                WHERE e.IDUTILISATEUR = :id_utilisateur
+                
+                UNION
+                
+                SELECT p.IDPROFESSEUR AS ID_ROLE, 'PROFESSEUR' AS ROLE
+                FROM PROFESSEUR p
+                WHERE p.IDUTILISATEUR = :id_utilisateur
+            ");
+            $req->bindValue(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+            $req->execute();
+            $data = $req->fetch(PDO::FETCH_ASSOC);
+            return $data ? $data : null;
+        } catch (PDOException $e) {
+            // Vous pouvez gérer l'exception ici, par exemple en journalisant l'erreur ou en la remontant
+            throw new Exception("Erreur lors de la récupération du rôle : " . $e->getMessage());
+        }
     }
-
+    
     public static function deconnexion(){
         unset($_SESSION['user']);
 		unset($_SESSION['autorisation']);

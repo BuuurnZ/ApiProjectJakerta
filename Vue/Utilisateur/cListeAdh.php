@@ -1,18 +1,13 @@
 <div>
     <?php include("Vue/navbar.php"); ?>
     <div class="sm:ml-40">
-        <?php
-        if (!empty($_SESSION['message'])) {
-        ?>
-            <div class="m-2 bg-red-200 font-semibold flex justify-center alert alert-success" role="alert" data-auto-dismiss="2000">
-                <?php
-                echo ($_SESSION["message"]);
-                unset($_SESSION["message"]);
-                ?>
+
+        <?php if (!empty($_SESSION['message'])): ?>
+            <div class="m-2 bg-red-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
+                <?php echo $_SESSION['message']; ?>
             </div>
-        <?php
-        }
-        ?>
+            <?php unset($_SESSION['message']); ?>
+        <?php endif; ?>
 
         <div class="flex items-center justify-between p-4 bg-white">
             <div></div>
@@ -49,14 +44,14 @@
                         </div>
                     </div>
                     <div class="absolute bottom-4 right-4 sm:static sm:flex sm:justify-end sm:p-4">
-                        <a class="flex items-center bg-yellow-500 h-10 px-3 mt-2 rounded hover:bg-yellow-600" href="index.php?uc=eleve&action=modifier&idutilisateur=<?= $eleve->getIdutilisateur() ?>">
+                        <a class="flex items-center bg-yellow-500 h-10 px-3 mt-2 rounded hover:bg-yellow-600" href="index.php?uc=utilisateur&action=modifier&idutilisateur=<?= $eleve->getIdutilisateur() ?>">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.5 21h-11a2.5 2.5 0 01-2.5-2.5v-11A2.5 2.5 0 016.5 5h11a2.5 2.5 0 012.5 2.5v11a2.5 2.5 0 01-2.5 2.5z" />
                             </svg>
                             <span class="ml-2 text-white text-xs font-medium">Modifier</span>
                         </a>
-                        <a class="flex items-center bg-red-600 h-10 px-3 mt-2 rounded ml-2 hover:bg-gray-300" href="index.php?uc=eleve&action=supprimer&idutilisateur=<?= $eleve->getIdutilisateur() ?>">
+                        <a class="flex items-center bg-red-600 h-10 px-3 mt-2 rounded ml-2 hover:bg-gray-300" href="index.php?uc=utilisateur&action=supprimer&idutilisateur=<?= $eleve->getIdutilisateur() ?>">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>

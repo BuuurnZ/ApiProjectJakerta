@@ -5,21 +5,12 @@
 
 <section style="background-image: url('Images/music.jpg');" class="bg-cover h-screen overflow-hidden p-12 bg-violet-600">
 
-<?php
-
-if(!empty($_SESSION['message']))
-    {
-      ?>
-        <div class="m-2 bg-red-200 font-semibold flex justify-center alert alert-success" role="alert" data-auto-dismiss="2000">
-            <?php echo($_SESSION["message"]); 
-                  unset($_SESSION["message"]); 	
-            ?>
+    <?php if (!empty($_SESSION['message'])): ?>
+        <div class="m-2 bg-red-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
+            <?php echo $_SESSION['message']; ?>
         </div>
-
-      <?php
-    }
-
-?>
+        <?php unset($_SESSION['message']); ?>
+    <?php endif; ?>
 
 
 <div class="sm:ml-40 ">

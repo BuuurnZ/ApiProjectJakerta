@@ -2,21 +2,16 @@
 <?php
     include("Vue/navbar.php");
 ?>
-
+<?php if (!empty($_SESSION['message'])): ?>
+        <div class="m-2 bg-red-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
+            <?php echo $_SESSION['message']; ?>
+        </div>
+        <?php unset($_SESSION['message']); ?>
+    <?php endif; ?>
+    
 <section style="background-image: url('Images/music.jpg');" class="bg-cover min-h-screen flex items-center justify-center bg-violet-600">
 
-<?php
-if(!empty($_SESSION['message'])) {
-?>
-    <div class="m-2 bg-red-200 font-semibold flex justify-center alert alert-success" role="alert" data-auto-dismiss="2000">
-        <?php 
-            echo($_SESSION["message"]); 
-            unset($_SESSION["message"]);     
-        ?>
-    </div>
-<?php
-}
-?>
+    
 
 <div class="w-full sm:max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
     <form id="form" class="mt-10" action="index.php?uc=utilisateur&action=inscription" method="post">
