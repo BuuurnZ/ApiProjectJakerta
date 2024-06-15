@@ -14,8 +14,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                 if($result) {
                     $_SESSION["user"] = $login;
                     $_SESSION["autorisation"] = "emp";
-                    $_GET["action"] = "liste";
-                    include("Controller/SeanceController.php");
+                    header("Location: index.php?uc=eleve&action=liste");
                     exit();
                 } else {
                     $_SESSION["message"] = "Login ou mot de passe incorrect. Veuillez réessayer.";
