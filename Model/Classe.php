@@ -13,7 +13,7 @@ class Classe {
         $this->eleves = $eleves;
     }
 
-    // Méthode pour récupérer toutes les classes avec leurs élèves
+    // ajouter exception
     public static function getAll() {
         $pdo = MonPdo::getInstance();
 
@@ -105,7 +105,7 @@ class Classe {
         } catch (PDOException $e) {
             // En cas d'erreur, annule la transaction et affiche l'erreur
             $pdo->rollBack();
-            echo "Erreur lors de la suppression de la classe : " . $e->getMessage();
+            throw new Exception("Erreur lors de la suppression de la classe : " . $e->getMessage());
             return false;
         }
     }
@@ -163,11 +163,11 @@ class Classe {
             return $classes;
     
         } catch (PDOException $e) {
-            echo "Erreur lors de la récupération des classes disponibles : " . $e->getMessage();
+            throw new Exception("Erreur lors de la récupération des classes disponibles : " . $e->getMessage());
             return [];
         }
     }
-    
+    //Ajouter exception
     public static function getElevesDansClasse($idClasse) {
         $pdo = MonPdo::getInstance();
         $req = $pdo->prepare("
@@ -230,7 +230,7 @@ class Classe {
         } catch (PDOException $e) {
             // En cas d'erreur, annuler la transaction
             $pdo->rollBack();
-            echo "Erreur lors de l'ajout des élèves à la classe : " . $e->getMessage();
+            throw new Exception("Erreur lors de l'ajout des élèves à la classe : " . $e->getMessage());
         }
     }
     

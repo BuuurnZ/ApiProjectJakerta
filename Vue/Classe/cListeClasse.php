@@ -3,16 +3,13 @@
 </div>
 
 <div class="sm:ml-40">
-    <?php
-    if (!empty($_SESSION['message'])) {
-    ?>
-        <div class="m-2 bg-red-200 font-semibold flex justify-center alert alert-success" role="alert" data-auto-dismiss="2000">
-            <?php echo($_SESSION["message"]); ?>
-            <?php unset($_SESSION["message"]); ?>
+    <?php if (!empty($_SESSION['message'])): ?>
+        <div class="m-2 bg-red-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
+            <?php echo $_SESSION['message']; ?>
         </div>
-    <?php
-    }
-    ?>
+        <?php unset($_SESSION['message']); ?>
+    <?php endif; ?>
+
     <div class="flex items-center justify-between p-4 bg-white">
             <div></div>
             <div class="relative">
