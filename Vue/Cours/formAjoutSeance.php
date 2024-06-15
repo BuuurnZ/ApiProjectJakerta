@@ -2,12 +2,17 @@
     <?php include("Vue/navbar.php"); ?>
 </div>
 
-<section style="background-image: url('Images/music.jpg');" class="bg-cover min-h-screen flex items-center justify-center bg-violet-600">
     <?php if (!empty($_SESSION['message'])): ?>
-        <div class="m-2 bg-red-200 font-semibold flex justify-center alert alert-success" role="alert" data-auto-dismiss="2000">
-            <?php echo($_SESSION["message"]); unset($_SESSION["message"]); ?>
+        <div class="m-2 bg-red-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
+            <?php echo $_SESSION['message']; ?>
         </div>
+        <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
+
+
+<section style="background-image: url('Images/music.jpg');" class="bg-cover min-h-screen flex items-center justify-center bg-violet-600">
+
+
 
     <div class="w-full max-w-lg px-6 py-8 bg-white rounded-lg shadow-md">
         <form id="instrumentForm" class="space-y-4" action="index.php?uc=seance&action=ajouter" method="post">

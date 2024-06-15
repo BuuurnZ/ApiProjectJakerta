@@ -13,97 +13,99 @@ class Classe {
         $this->eleves = $eleves;
     }
 
-    // ajouter exception
+
     public static function getAll() {
-        $pdo = MonPdo::getInstance();
-
-        // Requête SQL pour récupérer les classes avec leurs élèves
-        $req = $pdo->prepare("
-            SELECT 
-                C.IDCLASSE, 
-                C.IDINSTRUMENT, 
-                I.LIBELLE as NOMINSTRUMENT,
-                U.IDUTILISATEUR,
-                U.NOM, 
-                U.PRENOM, 
-                U.TELEPHONE, 
-                U.ADRESSE, 
-                U.MAIL,
-                E.IDELEVE
-            FROM 
-                CLASSE C
-            LEFT JOIN 
-                CLASSE_ELEVE CE ON C.IDCLASSE = CE.IDCLASSE
-            LEFT JOIN 
-                ELEVE E ON CE.IDELEVE = E.IDELEVE
-            LEFT JOIN 
-                UTILISATEUR U ON E.IDUTILISATEUR = U.IDUTILISATEUR
-            LEFT JOIN
-                INSTRUMENT I ON C.IDINSTRUMENT = I.IDINSTRUMENT
-        ");
-        
-        $req->execute();
-        $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
-
-        $classes = [];
-        foreach ($resultats as $row) {
-            $idClasse = $row['IDCLASSE'];
-            if (!isset($classes[$idClasse])) {
-                $classes[$idClasse] = new Classe(
-                    $row['IDCLASSE'],
-                    $row['IDINSTRUMENT'],
-                    $row['NOMINSTRUMENT']
-                );
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("
+                SELECT 
+                    C.IDCLASSE, 
+                    C.IDINSTRUMENT, 
+                    I.LIBELLE as NOMINSTRUMENT,
+                    U.IDUTILISATEUR,
+                    U.NOM, 
+                    U.PRENOM, 
+                    U.TELEPHONE, 
+                    U.ADRESSE, 
+                    U.MAIL,
+                    E.IDELEVE
+                FROM 
+                    CLASSE C
+                LEFT JOIN 
+                    CLASSE_ELEVE CE ON C.IDCLASSE = CE.IDCLASSE
+                LEFT JOIN 
+                    ELEVE E ON CE.IDELEVE = E.IDELEVE
+                LEFT JOIN 
+                    UTILISATEUR U ON E.IDUTILISATEUR = U.IDUTILISATEUR
+                LEFT JOIN
+                    INSTRUMENT I ON C.IDINSTRUMENT = I.IDINSTRUMENT
+            ");
+            
+            $req->execute();
+            $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
+    
+            $classes = [];
+            foreach ($resultats as $row) {
+                $idClasse = $row['IDCLASSE'];
+                if (!isset($classes[$idClasse])) {
+                    $classes[$idClasse] = new Classe(
+                        $row['IDCLASSE'],
+                        $row['IDINSTRUMENT'],
+                        $row['NOMINSTRUMENT']
+                    );
+                }
+                if ($row['IDUTILISATEUR'] !== null) {
+                    $eleve = new Eleve(
+                        $row['IDELEVE'],
+                        $row['NOM'],
+                        $row['PRENOM'],
+                        $row['TELEPHONE'],
+                        $row['MAIL'],
+                        $row['ADRESSE'],
+                        null,
+                        false,
+                        [],
+                        $row['IDUTILISATEUR']
+                    );
+                    $classes[$idClasse]->eleves[] = $eleve;
+                }
             }
-            if ($row['IDUTILISATEUR'] !== null) {
-                $eleve = new Eleve(
-                    $row['IDELEVE'],
-                    $row['NOM'],
-                    $row['PRENOM'],
-                    $row['TELEPHONE'],
-                    $row['MAIL'],
-                    $row['ADRESSE'],
-                    null, // MDP
-                    false, // EST_ADMIN
-                    [], // INSTRUMENTS
-                    $row['IDUTILISATEUR']
-                );
-                $classes[$idClasse]->eleves[] = $eleve;
-            }
+    
+            return array_values($classes);
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la récupération des classes et des élèves : " . $e->getMessage());
         }
-
-        return array_values($classes);
     }
 
     public static function supprimerClasse($idClasse) {
         $pdo = MonPdo::getInstance();
     
         try {
-            // Démarre une transaction
+
             $pdo->beginTransaction();
     
-            // Suppression des élèves associés à la classe
+
             $reqSuppressionEleves = $pdo->prepare("
                 DELETE FROM CLASSE_ELEVE WHERE IDCLASSE = :idClasse
             ");
             $reqSuppressionEleves->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
             $reqSuppressionEleves->execute();
     
-            // Suppression de la classe elle-même
+
             $reqSuppressionClasse = $pdo->prepare("
                 DELETE FROM CLASSE WHERE IDCLASSE = :idClasse
             ");
             $reqSuppressionClasse->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
             $reqSuppressionClasse->execute();
     
-            // Valide la transaction
+
             $pdo->commit();
     
-            // Retourne vrai si la suppression s'est bien passée
+
             return true;
     
         } catch (PDOException $e) {
-            // En cas d'erreur, annule la transaction et affiche l'erreur
+
             $pdo->rollBack();
             throw new Exception("Erreur lors de la suppression de la classe : " . $e->getMessage());
             return false;
@@ -114,12 +116,12 @@ class Classe {
         $pdo = MonPdo::getInstance();
     
         try {
-            // Extraire la date et l'heure de la chaîne datetime
+
             $date = substr($datetime, 0, 10);
             $heureDebut = substr($datetime, 11, 5);
             $heureFin = date('H:i', strtotime($heureDebut . ' + 2 hours'));
     
-            // Requête pour récupérer les classes disponibles
+
             $req = $pdo->prepare("
                 SELECT DISTINCT C.IDCLASSE, I.LIBELLE AS LIBELLE_INSTRUMENT
                 FROM CLASSE C
@@ -137,29 +139,28 @@ class Classe {
                 )
             ");
     
-            // Liaison des paramètres pour la requête des classes
+
             $req->bindParam(':idInstrument', $idInstrument, PDO::PARAM_INT);
             $req->bindParam(':date', $date);
             $req->bindParam(':heureDebut', $heureDebut);
             $req->bindParam(':heureFin', $heureFin);
     
-            // Exécution de la requête des classes
+
             $req->execute();
             $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
     
-            // Construction des objets Classe à partir des résultats
+
             $classes = [];
             foreach ($resultats as $row) {
                 $classe = new Classe(
                     $row['IDCLASSE'],
                     '',
                     '',
-                    '' // Nom de l'instrument associé à la classe
+                    '' 
                 );
                 $classes[] = $classe;
             }
     
-            // Retourner la liste des classes disponibles
             return $classes;
     
         } catch (PDOException $e) {
@@ -167,38 +168,42 @@ class Classe {
             return [];
         }
     }
-    //Ajouter exception
+    
     public static function getElevesDansClasse($idClasse) {
-        $pdo = MonPdo::getInstance();
-        $req = $pdo->prepare("
-            SELECT U.IDUTILISATEUR, U.NOM, U.PRENOM, U.TELEPHONE, U.ADRESSE, U.MAIL, E.IDELEVE
-            FROM UTILISATEUR U
-            JOIN ELEVE E ON U.IDUTILISATEUR = E.IDUTILISATEUR
-            JOIN CLASSE_ELEVE CE ON E.IDELEVE = CE.IDELEVE
-            WHERE CE.IDCLASSE = :idClasse
-        ");
-        $req->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
-        $req->execute();
-        $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
-        
-        $eleves = [];
-        foreach ($resultats as $row) {
-            $eleve = new Eleve(
-                $row['IDELEVE'], // IDELEVE
-                $row['NOM'],
-                $row['PRENOM'],
-                $row['TELEPHONE'],
-                $row['MAIL'],
-                $row['ADRESSE'],
-                null, // MDP
-                false, // EST_ADMIN
-                [], // INSTRUMENTS
-                $row['IDUTILISATEUR']
-            );
-            $eleves[] = $eleve;
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("
+                SELECT U.IDUTILISATEUR, U.NOM, U.PRENOM, U.TELEPHONE, U.ADRESSE, U.MAIL, E.IDELEVE
+                FROM UTILISATEUR U
+                JOIN ELEVE E ON U.IDUTILISATEUR = E.IDUTILISATEUR
+                JOIN CLASSE_ELEVE CE ON E.IDELEVE = CE.IDELEVE
+                WHERE CE.IDCLASSE = :idClasse
+            ");
+            $req->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
+            $req->execute();
+            $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
+            
+            $eleves = [];
+            foreach ($resultats as $row) {
+                $eleve = new Eleve(
+                    $row['IDELEVE'], 
+                    $row['NOM'],
+                    $row['PRENOM'],
+                    $row['TELEPHONE'],
+                    $row['MAIL'],
+                    $row['ADRESSE'],
+                    null, 
+                    false, 
+                    [], 
+                    $row['IDUTILISATEUR']
+                );
+                $eleves[] = $eleve;
+            }
+    
+            return $eleves;
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la récupération des élèves dans la classe : " . $e->getMessage());
         }
-
-        return $eleves;
     }
 
     public static function ajouterClasseAvecEleves($listeEleves, $idInstrument) {
@@ -228,7 +233,7 @@ class Classe {
     
             echo "Classe créée avec succès et élèves ajoutés.";
         } catch (PDOException $e) {
-            // En cas d'erreur, annuler la transaction
+
             $pdo->rollBack();
             throw new Exception("Erreur lors de l'ajout des élèves à la classe : " . $e->getMessage());
         }

@@ -25,7 +25,7 @@ class Professeur extends Utilisateur
         $pdo = MonPdo::getInstance();
     
         try {
-            // Extraire la date et l'heure de la chaîne datetime
+
             $date = substr($datetime, 0, 10);
             $heureDebut = substr($datetime, 11, 5);
             $heureFin = date('H:i', strtotime($heureDebut . ' + 2 hours'));
@@ -49,30 +49,30 @@ class Professeur extends Utilisateur
                 )
             ");
     
-            // Liaison des paramètres
+
             $req->bindParam(':idInstrument', $idInstrument, PDO::PARAM_INT);
             $req->bindParam(':date', $date);
             $req->bindParam(':heureDebut', $heureDebut);
             $req->bindParam(':heureFin', $heureFin);
     
-            // Exécution de la requête
+
             $req->execute();
             $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
     
-            // Construction des objets Professeur à partir des résultats
+
             $profs = [];
             foreach ($resultats as $row) {
                 $prof = new Professeur(
                     $row['IDPROFESSEUR'],
                     $row['NOM'],
                     $row['PRENOM'],
-                    '', // Ajoutez ici le téléphone
-                    '', // Ajoutez ici l'adresse email
-                    '', // Ajoutez ici l'adresse
-                    '', // Ajoutez ici le mot de passe
-                    0, // Ajoutez ici la valeur de est_admin
-                    [], // Ajoutez ici les instruments
-                    0 // Ajoutez ici l'id utilisateur
+                    '', 
+                    '', 
+                    '', 
+                    '', 
+                    0, 
+                    [], 
+                    0 
                 );
                 $profs[] = $prof;
             }

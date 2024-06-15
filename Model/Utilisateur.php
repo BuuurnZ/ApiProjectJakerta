@@ -34,7 +34,7 @@ class Utilisateur
             $lesResultats = $req->fetchAll(PDO::FETCH_ASSOC);
             $utilisateurs = [];
             foreach ($lesResultats as $resultat) {
-                // Créer un nouvel objet Utilisateur avec les données récupérées
+
                 $utilisateur = new Utilisateur(
                     $resultat['NOM'],
                     $resultat['PRENOM'],
@@ -189,14 +189,14 @@ class Utilisateur
             if ($role != "") {
     
                 if ($role == "ELEVE") {
-                    // Si l'utilisateur était professeur, on le supprime de la table PROFESSEUR
+
                     if ($ancienRole == "PROFESSEUR") {
                         $reqDeleteProfesseur = $pdo->prepare("DELETE FROM PROFESSEUR WHERE IDUTILISATEUR = :id_utilisateur");
                         $reqDeleteProfesseur->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
                         $reqDeleteProfesseur->execute();
                     }
     
-                    // Si l'utilisateur n'était pas déjà élève, on l'ajoute à la table ELEVE
+
                     if ($ancienRole != $role) {
                         $reqEleve = $pdo->prepare("
                             INSERT INTO ELEVE (IDUTILISATEUR)
@@ -208,14 +208,14 @@ class Utilisateur
                 }
     
                 elseif ($role == "PROFESSEUR") {
-                    // Si l'utilisateur était élève, on le supprime de la table ELEVE
+
                     if ($ancienRole == "ELEVE") {
                         $reqDeleteEleve = $pdo->prepare("DELETE FROM ELEVE WHERE IDUTILISATEUR = :id_utilisateur");
                         $reqDeleteEleve->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
                         $reqDeleteEleve->execute();
                     }
     
-                    // Si l'utilisateur n'était pas déjà professeur, on l'ajoute à la table PROFESSEUR
+
                     if ($ancienRole != $role) {
                         $reqProfesseur = $pdo->prepare("
                             INSERT INTO PROFESSEUR (IDUTILISATEUR)
@@ -291,7 +291,7 @@ class Utilisateur
                 }
             }
 
-            return null; // Utilisateur non trouvé
+            return null; 
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la récupération de l'utilisateur : " . $e->getMessage());
         }
@@ -316,7 +316,7 @@ class Utilisateur
             $data = $req->fetch(PDO::FETCH_ASSOC);
             return $data ? $data : null;
         } catch (PDOException $e) {
-            // Vous pouvez gérer l'exception ici, par exemple en journalisant l'erreur ou en la remontant
+
             throw new Exception("Erreur lors de la récupération du rôle : " . $e->getMessage());
         }
     }

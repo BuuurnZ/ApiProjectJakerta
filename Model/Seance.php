@@ -16,35 +16,48 @@ class Seance
 	private $instrument;
     
 	
-    public static function getAll(){
-        $req = MonPdo::getInstance()->prepare("SELECT S.idSeance, S.date, S.heureDebut, S.heureFin, 
-			P.idProfesseur, U.NOM AS nomProfesseur, U.PRENOM AS prenomProfesseur, 
-			C.idClasse, I.LIBELLE AS instrument
-			FROM SEANCE S
-			JOIN PROFESSEUR P ON S.IDPROFESSEUR = P.IDPROFESSEUR
-			JOIN UTILISATEUR U ON P.IDUTILISATEUR = U.IDUTILISATEUR
-			JOIN CLASSE C ON S.IDCLASSE = C.IDCLASSE
-			JOIN INSTRUMENT I ON C.IDINSTRUMENT = I.IDINSTRUMENT
-			ORDER BY S.DATE, S.HEUREDEBUT;");
-        $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'seance');
-        $req->execute();
-        $lesResultats = $req->fetchAll();
-        return $lesResultats;
+    public static function getAll() {
+        try {
+            $req = MonPdo::getInstance()->prepare("
+                SELECT 
+                    S.idSeance, 
+                    S.date, 
+                    S.heureDebut, 
+                    S.heureFin, 
+                    P.idProfesseur, 
+                    U.NOM AS nomProfesseur, 
+                    U.PRENOM AS prenomProfesseur, 
+                    C.idClasse, 
+                    I.LIBELLE AS instrument
+                FROM SEANCE S
+                JOIN PROFESSEUR P ON S.IDPROFESSEUR = P.IDPROFESSEUR
+                JOIN UTILISATEUR U ON P.IDUTILISATEUR = U.IDUTILISATEUR
+                JOIN CLASSE C ON S.IDCLASSE = C.IDCLASSE
+                JOIN INSTRUMENT I ON C.IDINSTRUMENT = I.IDINSTRUMENT
+                ORDER BY S.DATE, S.HEUREDEBUT;
+            ");
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'seance');
+            $req->execute();
+            $lesResultats = $req->fetchAll();
+            return $lesResultats;
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la récupération des séances : " . $e->getMessage());
+        }
     }
 
     public static function ajouterSeance($idProfesseur, $idClasse, $datetime) {
         $pdo = MonPdo::getInstance();
     
         try {
-            // Extraire la date et l'heure de la chaîne datetime
+
             $date = substr($datetime, 0, 10);
             $heureDebut = substr($datetime, 11, 5);
             $heureFin = date('H:i', strtotime($heureDebut . ' + 2 hours'));
     
-            // Démarre une transaction
+
             $pdo->beginTransaction();
     
-            // Vérifier que l'instrument du professeur et de la classe sont les mêmes
+
             $reqVerifInstrument = $pdo->prepare("
                 SELECT COUNT(*) AS nbInstruments
                 FROM PROFESSEUR P
@@ -64,7 +77,7 @@ class Seance
                 throw new Exception("Le professeur et la classe doivent avoir le même instrument.");
             }
     
-            // Vérifier les conflits de planning
+
             $reqVerifConflit = $pdo->prepare("
                 SELECT COUNT(*) AS nbConflits
                 FROM SEANCE S
@@ -86,7 +99,7 @@ class Seance
                 throw new Exception("Il y a déjà un cours prévu pour cette classe à ce créneau horaire le même jour.");
             }
     
-            // Insérer la nouvelle séance
+            
             $reqInsertSeance = $pdo->prepare("
                 INSERT INTO SEANCE (IDPROFESSEUR, IDCLASSE, DATE, HEUREDEBUT, HEUREFIN)
                 VALUES (:idProfesseur, :idClasse, :date, :heureDebut, :heureFin)
@@ -98,14 +111,14 @@ class Seance
             $reqInsertSeance->bindParam(':heureFin', $heureFin);
             $reqInsertSeance->execute();
     
-            // Valide la transaction
+
             $pdo->commit();
     
-            // Retourne vrai si l'insertion s'est bien passée
+
             return true;
     
         } catch (PDOException $e) {
-            // En cas d'erreur, annule la transaction et affiche l'erreur
+
             $pdo->rollBack();
             echo "Erreur lors de l'ajout de la séance : " . $e->getMessage();
             return false;

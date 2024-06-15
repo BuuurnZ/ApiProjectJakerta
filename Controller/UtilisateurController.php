@@ -57,13 +57,13 @@ if ($action == "connexion" || $action == "deconnexion") {
                     $telephone = filter_input(INPUT_POST, "telephone", FILTER_SANITIZE_STRING);
                     $mail = filter_input(INPUT_POST, "mail", FILTER_SANITIZE_EMAIL);
                 
-                    // Vérifier si l'adresse email est valide
+                    /*  verifier le format du mail 
                     if (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
                         $_SESSION['message'] =  "L'adresse email n'est pas valide.";
                         include("Vue/Utilisateur/formAjoutPersonne.php");
                         exit();
                     }
-                
+                    */
                     $adresse = filter_input(INPUT_POST, "adresse", FILTER_SANITIZE_STRING);
                     $mdp = filter_input(INPUT_POST, "mdp", FILTER_SANITIZE_STRING);
                     $role = filter_input(INPUT_POST, "role", FILTER_VALIDATE_INT);

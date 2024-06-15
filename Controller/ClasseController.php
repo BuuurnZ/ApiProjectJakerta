@@ -1,9 +1,9 @@
 <?php
 
-// Vérification de l'action à effectuer
+
 $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
 
-// Vérification de l'autorisation
+
 if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
 
     try {
@@ -32,7 +32,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                     header("Location: index.php?uc=classe&action=affichage");
                     exit();
                 }
-                // Si la soumission du formulaire n'a pas eu lieu, on affiche le formulaire d'ajout d'élèves
+
                 include("Vue/Classe/formAjoutClasse.php");
                 break;
 
@@ -53,14 +53,14 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                 break;
 
             default:
-                // Si l'action n'est pas reconnue, on affiche la liste par défaut
+
                 $lesClasses = Classe::getAll();
                 include("Vue/Classe/cListeClasse.php");
                 break;
         }
     } catch (Exception $e) {
         $_SESSION['message'] = $e->getMessage();
-        header("Location: index.php?uc=classe&action=affichage"); // Redirection vers une page d'accueil par exemple en cas d'erreur
+        header("Location: index.php?uc=classe&action=affichage"); 
         exit();
     }
 
