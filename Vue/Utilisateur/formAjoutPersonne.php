@@ -2,7 +2,7 @@
 <?php
     include("Vue/navbar.php");
 ?>
-<?php if (!empty($_SESSION['message'])): ?>
+    <?php if (!empty($_SESSION['message'])): ?>
         <div class="m-2 bg-red-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
             <?php echo $_SESSION['message']; ?>
         </div>
@@ -104,16 +104,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateInstrumentOptions() {
         const role = roleSelect.value;
-        if (role === '1') { // Admin
+        if (role === '1') { 
             instrumentsContainer.style.display = 'none';
             instrumentCheckboxes.forEach(checkbox => checkbox.checked = false);
-        } else if (role === '2') { // Élève
+        } else if (role === '2') { 
             instrumentsContainer.style.display = 'block';
             instrumentCheckboxes.forEach(checkbox => {
                 checkbox.type = 'radio';
                 checkbox.name = 'instruments[]';
             });
-        } else if (role === '3') { // Professeur
+        } else if (role === '3') { 
             instrumentsContainer.style.display = 'block';
             instrumentCheckboxes.forEach(checkbox => {
                 checkbox.type = 'checkbox';
@@ -123,6 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     roleSelect.addEventListener('change', updateInstrumentOptions);
-    updateInstrumentOptions(); // Initial call to set the correct state
+    updateInstrumentOptions(); 
 });
 </script>

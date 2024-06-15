@@ -57,9 +57,10 @@ class Utilisateur
 
     public static function checkConnexion($login, $pw){
         try {
+            $pwHash = password_hash($pw, PASSWORD_BCRYPT);
             $req = MonPdo::getInstance()->prepare("SELECT COUNT(*) FROM utilisateur WHERE mail = :login AND mdp = :pw");
             $req->bindParam(':login', $login);
-            $req->bindParam(':pw', $pw);
+            $req->bindParam(':pw', $pwHash);
             $req->execute();
             $nb_lignes = $req->fetchColumn();
 
@@ -82,7 +83,7 @@ class Utilisateur
             $telephone = $utilisateur->getTelephone();
             $adresse = $utilisateur->getAdresse();
             $mail = $utilisateur->getMail();
-            $mdp = $utilisateur->getMdp();
+            $mdp = password_hash($utilisateur->getMdp(), PASSWORD_BCRYPT);
             $est_admin = $utilisateur->getEstadmin();
     
             $req->bindParam(':nom', $nom);
@@ -92,7 +93,7 @@ class Utilisateur
             $req->bindParam(':mail', $mail);
             $req->bindParam(':mdp', $mdp);
             $req->bindParam(':est_admin', $est_admin);
-    
+            
             $req->execute();
             if($role != ""){
                 $id_utilisateur = $pdo->lastInsertId();
@@ -142,7 +143,7 @@ class Utilisateur
             throw new Exception("Erreur lors de la suppression de l'utilisateur : " . $e->getMessage());
         }
     }
-
+    //a modifier
     public static function modifierPersonne($utilisateur, $role, $ancienRole) {
         $pdo = MonPdo::getInstance();
         $pdo->beginTransaction();

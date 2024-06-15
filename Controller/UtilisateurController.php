@@ -88,9 +88,10 @@ if ($action == "connexion" || $action == "deconnexion") {
                         Utilisateur::ajouterPersonne($utilisateur, "");
                     }
                 
-                    include("Controller/SeanceController.php");
+                    header("Location: index.php?uc=eleve&action=liste");
                     exit();
                     break;
+
             case "supprimer":
                 $_GET["action"] = "liste";
                 $idutilisateur = filter_input(INPUT_GET, "idutilisateur", FILTER_VALIDATE_INT);
