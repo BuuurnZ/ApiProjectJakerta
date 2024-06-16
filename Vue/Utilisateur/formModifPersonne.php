@@ -1,9 +1,8 @@
-<div>
 <?php
-    include("Vue/navbar.php");
+include("Vue/navbar.php");
 ?>
 
-<section style="background-image: url('Images/music.jpg');" class="bg-cover h-screen overflow-hidden p-12 bg-violet-600">
+<section style="background-image: url('Images/music.jpg');" class="bg-cover h-screen overflow-auto p-12 bg-violet-600">
 
     <?php if (!empty($_SESSION['message'])): ?>
         <div class="m-2 bg-red-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
@@ -12,134 +11,130 @@
         <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
 
+    <div class="w-full max-w-lg mx-auto bg-white rounded-lg shadow-md">
+        <form id="form" class="mt-10 px-6 py-8" action="index.php?uc=utilisateur&action=modifier&idutilisateur=<?= $utilisateur->getIdutilisateur() ?>" method="post">
 
-<div class="sm:ml-40 ">
-<form id="form" class="mt-30 ml-60 w-full max-w-lg flex-col" action="index.php?uc=eleve&action=validerModifier&idutilisateur=<?php echo($utilisateur->getIdutilisateur()) ?>" method="post">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
+                    Rôle
+                </label>
+                <select id="role" name="role" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
+                    <option value="1" <?php if ($utilisateur instanceof Utilisateur) echo "selected"; ?>>Admin</option>
+                    <option value="2" <?php if ($utilisateur instanceof Eleve) echo "selected"; ?>>Élève</option>
+                    <option value="3" <?php if ($utilisateur instanceof Professeur) echo "selected"; ?>>Professeur</option>
+                </select>
+            </div>
 
-<div class="flex flex-wrap -mx-3 mb-6">
-    <select id="services" name="role">
-            <option value="1" <?php if($utilisateur instanceof Utilisateur){echo("selected");}?>>Admin</option>
-            <option value="2" <?php if($utilisateur instanceof Eleve){echo("selected");}?> >Élève</option>
-            <option value="3" <?php if($utilisateur instanceof Professeur){echo("selected");}?>>Professeur</option>
-            
-    </select>
-  </div>
+            <div class="mb-4">
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="nom">
+                            Nom
+                        </label>
+                        <input id="nom" name="nom" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Jane" value="<?= $utilisateur->getNom() ?>" required>
+                    </div>
+                    <div class="w-full md:w-1/2 px-3">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="prenom">
+                            Prénom
+                        </label>
+                        <input id="prenom" name="prenom" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Doe" value="<?= $utilisateur->getPrenom() ?>" required>
+                    </div>
+                </div>
+            </div>
 
-  <div class="flex flex-wrap -mx-3 mb-6">
-    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
-            Nom
-        </label>
-        <input id="one" name="nom" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Jane" value="<?= $utilisateur->getNom() ?>" required>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="mail">
+                    E-mail
+                </label>
+                <input id="mail" name="mail" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="email" placeholder="user@example.me" value="<?= $utilisateur->getMail() ?>" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="mdp">
+                    Mot de passe
+                </label>
+                <input id="mdp" name="mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="password" placeholder="••••••••">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm_mdp">
+                    Confirmer Mot de passe
+                </label>
+                <input id="confirm_mdp" name="confirm_mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="password" placeholder="••••••••">
+                <p id="mdp_error" class="text-red-500 text-xs italic" style="display: none;">Les mots de passe ne correspondent pas.</p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="adresse">
+                    Adresse
+                </label>
+                <input id="adresse" name="adresse" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="24 place de la concorde, 75015 Paris" value="<?= $utilisateur->getAdresse() ?>" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="telephone">
+                    Téléphone
+                </label>
+                <input id="telephone" name="telephone" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="+0654899585" value="<?= $utilisateur->getTelephone() ?>" required>
+            </div>
+
+            <div class="mb-4 instruments-container">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    Instruments
+                </label>
+                <ul>
+                    <?php foreach ($LesInstruments as $instrument): ?>
+                        <li>
+                            <input type="checkbox" id="instrument<?= $instrument->getIDINSTRUMENT() ?>" name="instruments[]" value="<?= $instrument->getIDINSTRUMENT() ?>" <?php if (in_array($instrument->getIDINSTRUMENT(), $utilisateur->getInstruments())) echo 'checked'; ?>>
+                            <label for="instrument<?= $instrument->getIDINSTRUMENT() ?>"><?= $instrument->getLIBELLE() ?></label>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+
+            <div class="flex justify-center">
+                <button id="submitbtn" class="bg-orange-400 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
+                    Modifier
+                </button>
+            </div>
+
+            <?php if ($utilisateur instanceof Eleve): ?>
+                <input type="hidden" id="ideleve" name="ideleve" value="<?= $utilisateur->getIDELEVE() ?>">
+            <?php elseif ($utilisateur instanceof Professeur): ?>
+                <input type="hidden" id="idprofesseur" name="idprofesseur" value="<?= $utilisateur->getIDPROFESSEUR() ?>">
+            <?php endif; ?>
+
+        </form>
     </div>
-    <div class="w-full md:w-1/2 px-3">
-        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-last-name">
-            Prénom
-        </label>
-        <input id="two" name="prenom" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Doe" value="<?= $utilisateur->getPrenom() ?>" required>
-    </div>
-  </div>
+</section>
 
-  <div class="flex flex-wrap -mx-3 mb-6">
-      <div class="w-full px-3">
-          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              E-mail
-          </label>
-          <input id="three" name="mail" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="email" placeholder="user@example.me" value="<?= $utilisateur->getMail() ?>" required>
-      </div>
-  </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleSelect = document.getElementById('role');
+        const instrumentsContainer = document.querySelector('.instruments-container'); // Utilisation de la classe spécifique
+        const instrumentCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+        const instrumentLabels = document.querySelectorAll('.instruments-container label');
 
-  <div class="flex flex-wrap -mx-3 mb-6">
-      <div class="w-full px-3">
-          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              Mot de passe
-          </label>
-          <input id="four" name="mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" placeholder="••••••••" value="<?= $utilisateur->getMdp() ?>" required>
-      </div>
-  </div>
-
-  <div class="flex flex-wrap -mx-3 mb-6">
-      <div class="w-full px-3">
-          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              Adresse
-          </label>
-          <input id="four" name="adresse" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" placeholder="24 place de la concorde, 75015 Paris" value="<?= $utilisateur->getAdresse() ?>" required>
-      </div>
-  </div>
-
-  <div class="flex flex-wrap -mx-3 mb-6">
-      <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              Téléphone
-          </label>
-          <input id="five" name="telephone" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" placeholder="+0654899585" value="<?= $utilisateur->getTelephone() ?>" required>
-      </div>
-  </div>
-
-    <div class="flex flex-wrap -mx-3 mb-6">
-      <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-        <ul> 
-        <?php
-          foreach ($LesInstruments as $instrument) { ?>
-          
-            <li>
-                <input type="checkbox" id="<?= $instrument->getIDINSTRUMENT() ?>" name="instruments[]" value="<?= $instrument->getIDINSTRUMENT() ?>" 
-                <?php if(gettype($utilisateur->getInstruments())!= "integer"){foreach($utilisateur->getInstruments() as $instrumentUtilisateur){
-                if($instrument->getIDINSTRUMENT() == $instrumentUtilisateur) { echo('checked');}}}?>  >
-                <label for="<?= $instrument->getIDINSTRUMENT() ?>"><?= $instrument->getLIBELLE() ?></label>
-            </li>
-
-        <?php } ?>
-        </ul>
-      </div>
-    </div>
-
-    <div class="flex ml-5 md:w-2/3">
-      <button id="submitbtn" class="shadow bg-orange-400 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
-        Ajouter
-      </button>
-    </div>
-
-    
-  </div>
-  <script>
-        try {
-            
-            let form = document.getElementById('form')
-            form.addEventListener('submit', (e) => {
-                e.preventDefault()
-
-                let five = document.getElementById('five').value
-                let six = document.getElementById('six').value
-
-                if(isNaN(five) or five.length < 10){
-                    throw {name:"TelFormatExp", message:"Veuillez saisir le bon format de numéro de téléphone."}
+        function updateInstrumentOptions() {
+            const role = roleSelect.value;
+            if (role === '1') { // Admin
+                instrumentsContainer.style.display = 'none';
+                instrumentCheckboxes.forEach(checkbox => checkbox.checked = false);
+            } else { // Élève ou Professeur
+                instrumentsContainer.style.display = 'block';
+                if (role === '2') { // Élève
+                    instrumentCheckboxes.forEach(checkbox => {
+                        checkbox.type = 'radio';
+                    });
+                } else if (role === '3') { // Professeur
+                    instrumentCheckboxes.forEach(checkbox => {
+                        checkbox.type = 'checkbox';
+                    });
                 }
-
-                if(isNaN(six)){
-                    throw {name:"BourseFormatExp", message:"Veuillez saisir une bourse."}
-                }
-            })
-
-        } catch (e) {
-            alert(e.message)
+            }
         }
-    </script>
 
-    <?php 
-      if($utilisateur instanceof Eleve){ ?>
-
-      <input type="hidden" id="ideleve" name="ideleve" value="<?= $utilisateur->getIDELEVE() ?>">
-
-    <?php } ?>
-    <?php 
-      if($utilisateur instanceof Professeur){ ?>
-
-      <input type="hidden" id="idprofesseur" name="idprofesseur" value="<?= $utilisateur->getIDPROFESSEUR() ?>">
-
-    <?php } ?>
-</form>
-
-
-</div>
-</div>
+        roleSelect.addEventListener('change', updateInstrumentOptions);
+        updateInstrumentOptions(); // Appel initial pour mettre à jour selon la valeur initiale
+    });
+</script>

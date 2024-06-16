@@ -1,6 +1,5 @@
 <?php
 include("Vue/navbar.php");
-
 ?>
 
 <section style="background-image: url('Images/music.jpg');" class="bg-cover min-h-screen flex items-center justify-center bg-violet-600">
@@ -58,10 +57,18 @@ include("Vue/navbar.php");
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="mdp">
                     Mot de passe
                 </label>
-                <input name="mdp" value="<?php echo htmlspecialchars($mdp ?? ''); ?>" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="mdp" type="password" placeholder="••••••••" required>
+                <input name="mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="mdp" type="password" placeholder="••••••••" required>
                 <?php if (!empty($_SESSION['erreurs']['mdp'])): ?>
                     <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['mdp']; ?></p>
                 <?php endif; ?>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm_mdp">
+                    Confirmer Mot de passe
+                </label>
+                <input name="confirm_mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="confirm_mdp" type="password" placeholder="••••••••" required>
+                <p id="mdp_error" class="text-red-500 text-xs italic" style="display: none;">Les mots de passe ne correspondent pas.</p>
             </div>
 
             <div class="mb-4">
@@ -117,11 +124,16 @@ include("Vue/navbar.php");
 <?php
 unset($_SESSION['erreurs']);
 ?>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const roleSelect = document.getElementById('role');
     const instrumentsContainer = document.getElementById('instruments-container');
     const instrumentCheckboxes = document.querySelectorAll('.instrument-checkbox');
+    const mdp = document.getElementById('mdp');
+    const confirmMdp = document.getElementById('confirm_mdp');
+    const mdpError = document.getElementById('mdp_error');
+    const form = document.getElementById('form');
 
     function updateInstrumentOptions() {
         const role = roleSelect.value;
@@ -145,5 +157,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     roleSelect.addEventListener('change', updateInstrumentOptions);
     updateInstrumentOptions(); 
+
+    function validatePasswords() {
+        if (mdp.value !== confirmMdp.value) {
+            mdpError.style.display = 'block';
+        } else {
+            mdpError.style.display = 'none';
+        }
+    }
+
+    mdp.addEventListener('input', validatePasswords);
+    confirmMdp.addEventListener('input', validatePasswords);
+
+    form.addEventListener('submit', function(event) {
+        if (mdp.value !== confirmMdp.value) {
+            event.preventDefault();
+            mdpError.style.display = 'block';
+        }
+    });
 });
 </script>
