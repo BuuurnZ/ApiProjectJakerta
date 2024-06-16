@@ -50,30 +50,13 @@
                     </div>
                     <div class="absolute bottom-4 right-4 sm:static sm:flex sm:justify-end sm:p-4">
                         <div class="flex flex-col space-y-2">
-                            <a class="flex items-center bg-orange-400 h-10 px-3 rounded hover:bg-gray-300" href="index.php?uc=eleve&action=inscription&idprof=<?= $cours->IDPROF ?>&nums=<?= $cours->NUMSEANCE ?>&jour=<?= $cours->JOUR ?>&tranche=<?= $cours->TRANCHE ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="8.5" cy="7" r="4"></circle>
-                                    <line x1="20" y1="8" x2="20" y2="14"></line>
-                                    <line x1="23" y1="11" x2="17" y2="11"></line>
-                                </svg>
-                                <span class="ml-2 text-white text-xs font-medium">Adhérent</span>
+                            <a class="flex items-center bg-blue-500 h-10 px-3 rounded hover:bg-gray-300" href="index.php?uc=seance&action=afficherMembre&idSeance=<?= $cours->getIdSeance() ?>">
+                                <i class="fas fa-eye h-4 w-4"></i>
+                                <span class="ml-2 text-white text-xs font-medium">Élève</span>
                             </a>
-                            <a class="flex items-center bg-yellow-500 h-10 px-3 rounded hover:bg-yellow-600" href="index.php?uc=inscriptions&action=liste&idprof=<?= $cours->IDPROF ?>&nums=<?= $cours->NUMSEANCE ?>&jour=<?= $cours->JOUR ?>&tranche=<?= $cours->TRANCHE ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="8.5" cy="7" r="4"></circle>
-                                    <line x1="20" y1="8" x2="20" y2="14"></line>
-                                    <line x1="23" y1="11" x2="17" y2="11"></line>
-                                </svg>
-                                <span class="ml-2 text-white text-xs font-medium">Modifier</span>
-                            </a>
-                            <a class="flex items-center bg-blue-900 h-10 px-3 rounded hover:bg-gray-300" href="index.php?uc=inscriptions&action=liste&idprof=<?= $cours->IDPROF ?>&nums=<?= $cours->NUMSEANCE ?>&jour=<?= $cours->JOUR ?>&tranche=<?= $cours->TRANCHE ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                                <span class="ml-2 text-white text-xs font-medium">Inscriptions</span>
+                            <a class="flex items-center bg-red-500 h-10 px-3 rounded hover:bg-gray-300" href="index.php?uc=seance&action=supprimer&idSeance=<?= $cours->getIdSeance() ?>">
+                                <i class="fas fa-trash-alt h-4 w-4"></i>
+                                <span class="ml-2 text-white text-xs font-medium">Supprimer</span>
                             </a>
                         </div>
                     </div>

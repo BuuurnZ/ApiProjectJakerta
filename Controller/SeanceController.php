@@ -48,6 +48,23 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
 
                 include("Vue/Cours/formAjoutSeance.php");
                 break;
+            
+                case "supprimer":
+                    $idSeance = filter_input(INPUT_GET, "idSeance", FILTER_VALIDATE_INT);
+                    if ($idSeance !== false && $idSeance !== null) {
+                        Seance::supprimerSeance($idSeance);
+                    }
+                    header("Location: index.php?uc=seance&action=liste");
+                    exit();
+                    break;
+
+                case "afficherMembre" :
+                    $idSeance = filter_input(INPUT_GET, "idSeance", FILTER_VALIDATE_INT);
+                    $lesEleves = Seance::afficherClasseSeance($idSeance);
+                    include("Vue/Cours/cListeMembreSeance.php");
+                    break;
+
+
         }
     } catch (Exception $e) {
         $_SESSION['message'] = "Erreur : " . $e->getMessage();

@@ -125,6 +125,71 @@ class Seance
         }
     }
 
+    public static function supprimerSeance($idSeance) {
+        try {
+
+            $pdo = MonPdo::getInstance();
+            $pdo->beginTransaction();
+
+            $req = $pdo->prepare("DELETE FROM SEANCE WHERE IDSEANCE = :idSeance");
+            $req->bindParam(':idSeance', $idSeance);
+            $req->execute();
+            $pdo->commit();
+
+        } catch (PDOException $e) {
+            $pdo->rollback();
+            throw new Exception("Erreur lors de la suppression de l'utilisateur : " . $e->getMessage());
+        }
+    }
+
+    public static function afficherClasseSeance($idSeance) {
+        try {
+            $pdo = MonPdo::getInstance();
+            $pdo->beginTransaction();
+    
+
+            $req = $pdo->prepare("
+                SELECT U.IDUTILISATEUR, U.NOM, U.PRENOM, U.TELEPHONE, U.MAIL, U.ADRESSE, E.IDELEVE
+                FROM CLASSE_ELEVE CE
+                JOIN ELEVE E ON CE.IDELEVE = E.IDELEVE
+                JOIN UTILISATEUR U ON E.IDUTILISATEUR = U.IDUTILISATEUR
+                JOIN SEANCE S ON CE.IDCLASSE = S.IDCLASSE
+                WHERE S.IDSEANCE = :idSeance
+            ");
+            $req->bindParam(':idSeance', $idSeance);
+            $req->execute();
+            $eleveData = $req->fetchAll(PDO::FETCH_ASSOC);
+    
+            $eleves = [];
+    
+
+            foreach ($eleveData as $data) {
+                $eleve = new Eleve(
+                    $data['IDELEVE'],
+                    $data['NOM'],
+                    $data['PRENOM'],
+                    $data['TELEPHONE'],
+                    $data['MAIL'],
+                    $data['ADRESSE'],
+                    "",
+                    "",
+                    [],
+                    $data['IDUTILISATEUR']
+                );
+    
+                $eleves[] = $eleve;
+            }
+    
+            $pdo->commit();
+    
+            return $eleves;
+    
+        } catch (PDOException $e) {
+            $pdo->rollback();
+            throw new Exception("Erreur lors de la récupération des élèves : " . $e->getMessage());
+        }
+    }
+
     /**
      * Get the value of idSeance
      */ 
