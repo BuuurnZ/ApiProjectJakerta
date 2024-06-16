@@ -141,3 +141,5 @@ else{
         updateInstrumentOptions(); 
     });
 </script>
+
+<?php include("Vue/footer.php"); ?>

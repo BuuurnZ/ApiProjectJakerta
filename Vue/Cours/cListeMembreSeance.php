@@ -55,3 +55,4 @@ else{
         </div>
     </div>
 
+    <?php include("Vue/footer.php"); ?>

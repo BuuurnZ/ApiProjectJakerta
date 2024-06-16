@@ -103,3 +103,4 @@ else{
         </form>
     </div>
 </section>
+<?php include("Vue/footer.php"); ?>

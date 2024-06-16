@@ -180,3 +180,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<?php include("Vue/footer.php"); ?>

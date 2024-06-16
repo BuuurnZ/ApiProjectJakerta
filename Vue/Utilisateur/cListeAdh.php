@@ -15,7 +15,7 @@ else{
         <?php endif; ?>
 
         
-
+<header>
     <div class="flex items-center justify-between p-4 bg-white">
         <div class="flex items-center w-full md:w-auto transition-all duration-300"> 
                 <div class="relative">
@@ -34,7 +34,8 @@ else{
         </div>
         <div></div> 
     </div>
-
+        </header>
+        <main>
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
             <?php
             foreach ($lesEleves as $eleve) {
@@ -73,3 +74,5 @@ else{
             ?>
         </div>
     </div>
+        </main>
+<?php include("Vue/footer.php"); ?>

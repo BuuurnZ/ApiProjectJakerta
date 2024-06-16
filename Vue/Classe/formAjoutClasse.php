@@ -84,3 +84,4 @@ else{
         }
     </script>
 </section>
+<?php include("Vue/footer.php"); ?>

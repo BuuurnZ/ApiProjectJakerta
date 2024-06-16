@@ -105,3 +105,5 @@ else{
         document.getElementById('instrumentForm').submit();
     }
 </script>
+
+<?php include("Vue/footer.php"); ?>

@@ -16,7 +16,7 @@ else{
     <div class="sm:ml-40">
 
     
-
+        
         <div class="flex items-center justify-between p-4 bg-white">
             <div class="flex items-center w-full md:w-auto transition-all duration-300"> 
                     <div class="relative">
@@ -35,7 +35,7 @@ else{
             </div>
             <div></div> 
         </div>
-
+        
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
             <?php foreach ($lesCours as $cours) { ?>
                 <div class="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-lg relative transition-none">
@@ -72,3 +72,4 @@ else{
         </div>
     </div>
 
+    <?php include("Vue/footer.php"); ?>
