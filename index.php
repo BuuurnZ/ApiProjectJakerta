@@ -39,7 +39,9 @@
             case "classe": 
                 include("Controller/ClasseController.php");
                 break;
-        
+            case "cgu": 
+                include("Vue/CGU.php");
+                break;
         }
     }
      catch (Exception $ex) {
