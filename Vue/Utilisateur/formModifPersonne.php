@@ -1,7 +1,10 @@
 <?php
-include("Vue/navbar.php");
-?>
-
+if($_SESSION["autorisation"] == "emp"){
+  include("Vue/navbar.php");
+}
+else{
+  include("Vue/navbarEleveProf.php");
+}  ?>
 <section style="background-image: url('Images/music.jpg');" class="bg-cover h-screen overflow-auto p-12 bg-violet-600">
 
     <?php if (!empty($_SESSION['message'])): ?>
@@ -111,22 +114,22 @@ include("Vue/navbar.php");
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const roleSelect = document.getElementById('role');
-        const instrumentsContainer = document.querySelector('.instruments-container'); // Utilisation de la classe spécifique
+        const instrumentsContainer = document.querySelector('.instruments-container'); 
         const instrumentCheckboxes = document.querySelectorAll('input[type="checkbox"]');
         const instrumentLabels = document.querySelectorAll('.instruments-container label');
 
         function updateInstrumentOptions() {
             const role = roleSelect.value;
-            if (role === '1') { // Admin
+            if (role === '1') { 
                 instrumentsContainer.style.display = 'none';
                 instrumentCheckboxes.forEach(checkbox => checkbox.checked = false);
-            } else { // Élève ou Professeur
+            } else { 
                 instrumentsContainer.style.display = 'block';
-                if (role === '2') { // Élève
+                if (role === '2') { 
                     instrumentCheckboxes.forEach(checkbox => {
                         checkbox.type = 'radio';
                     });
-                } else if (role === '3') { // Professeur
+                } else if (role === '3') { 
                     instrumentCheckboxes.forEach(checkbox => {
                         checkbox.type = 'checkbox';
                     });
@@ -135,6 +138,6 @@ include("Vue/navbar.php");
         }
 
         roleSelect.addEventListener('change', updateInstrumentOptions);
-        updateInstrumentOptions(); // Appel initial pour mettre à jour selon la valeur initiale
+        updateInstrumentOptions(); 
     });
 </script>

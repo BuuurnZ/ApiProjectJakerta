@@ -40,10 +40,11 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
                 $idClasse = filter_input(INPUT_POST, 'idClasse', FILTER_SANITIZE_NUMBER_INT);
 
                 if ($idInstruments && $dateSeance && $idProfesseur && $idClasse) {
-                    $_GET["action"] = "liste";
+
                     Seance::ajouterSeance($idProfesseur, $idClasse, $dateSeance);
                     header("Location: index.php?uc=seance&action=liste");
                     break;
+                    exit();
                 }
 
                 include("Vue/Cours/formAjoutSeance.php");

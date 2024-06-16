@@ -1,7 +1,10 @@
 <?php
-include("Vue/navbar.php");
-?>
-
+if($_SESSION["autorisation"] == "emp"){
+  include("Vue/navbar.php");
+}
+else{
+  include("Vue/navbarEleveProf.php");
+}  ?>
 <section style="background-image: url('Images/music.jpg');" class="bg-cover min-h-screen flex items-center justify-center bg-violet-600">
     <div class="w-full sm:max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
         <form id="form" class="mt-10" action="index.php?uc=utilisateur&action=inscription" method="post">

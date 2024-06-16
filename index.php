@@ -1,4 +1,5 @@
-<?php
+<?php 
+
     include("Vue/header.php");
     //Connexion à la base de données (uniquement dans index.php)
     include("Model/monPdo.php");
@@ -31,6 +32,9 @@
                 break;
             case "eleve":
                 include("Controller/EleveController.php");
+                break;
+            case "professeur":
+                include("Controller/ProfController.php");
                 break;
             case "classe": 
                 include("Controller/ClasseController.php");

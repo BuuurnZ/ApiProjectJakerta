@@ -1,6 +1,10 @@
-<div>
-    <?php include("Vue/navbar.php"); ?>
-</div>
+<?php
+if($_SESSION["autorisation"] == "emp"){
+  include("Vue/navbar.php");
+}
+else{
+  include("Vue/navbarEleveProf.php");
+}  ?>
 
 <section style="background-image: url('Images/music.jpg');" class="bg-cover h-screen overflow-hidden p-12 bg-violet-600">
     <?php if (!empty($_SESSION['message'])): ?>

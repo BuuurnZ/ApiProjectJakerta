@@ -1,8 +1,7 @@
 <?php
 
 $action = $_GET["action"];
-
-if(isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp"){
+if(isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "eleve"){
     switch($action){
 
         case "liste":

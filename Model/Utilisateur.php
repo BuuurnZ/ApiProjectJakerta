@@ -55,16 +55,37 @@ class Utilisateur
         }
     }
 
-    public static function checkConnexion($login, $pw){
+    public static function checkConnexion($login, $pw) {
         try {
-            $pwHash = password_hash($pw, PASSWORD_BCRYPT);
-            $req = MonPdo::getInstance()->prepare("SELECT COUNT(*) FROM utilisateur WHERE mail = :login AND mdp = :pw");
-            $req->bindParam(':login', $login);
-            $req->bindParam(':pw', $pwHash);
-            $req->execute();
-            $nb_lignes = $req->fetchColumn();
 
-            return $nb_lignes > 0;
+            $req = MonPdo::getInstance()->prepare("SELECT * FROM utilisateur WHERE mail = :login");
+            $req->bindParam(':login', $login);
+            $req->execute();
+            
+
+            $user = $req->fetch(PDO::FETCH_ASSOC);
+    
+            if ($user) {
+
+                if ($user) {
+
+                    return new Utilisateur(
+                        $user['NOM'],
+                        $user['PRENOM'],
+                        $user['TELEPHONE'],
+                        $user['MAIL'],
+                        $user['ADRESSE'],
+                        $user['MDP'],
+                        $user['EST_ADMIN'],
+                        [], 
+                        $user['IDUTILISATEUR']
+                    );
+                } else {
+                    throw new Exception("Login ou mot de passe incorrect. Veuillez réessayer.");
+                }
+            } else {
+                throw new Exception("Login ou mot de passe incorrect. Veuillez réessayer."); 
+            }
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la vérification de la connexion : " . $e->getMessage());
         }
@@ -143,7 +164,7 @@ class Utilisateur
             throw new Exception("Erreur lors de la suppression de l'utilisateur : " . $e->getMessage());
         }
     }
-    //a modifier
+
     public static function modifierPersonne($utilisateur, $role, $ancienRole) {
         $pdo = MonPdo::getInstance();
         $pdo->beginTransaction();
@@ -327,6 +348,44 @@ class Utilisateur
 		unset($_SESSION['autorisation']);
     }
 
+    public static function rechercheUtilisateur($utilisateur) {
+        $utilisateur = "%" . $utilisateur . "%";
+    
+        try {
+            $req = MonPdo::getInstance()->prepare("
+                SELECT U.IDUTILISATEUR, U.NOM, U.PRENOM, U.TELEPHONE, U.ADRESSE, U.MAIL
+                FROM UTILISATEUR U
+                WHERE LOWER(U.NOM) LIKE :utilisateur
+                OR LOWER(U.PRENOM) LIKE :utilisateur
+            ");
+            $req->bindParam(':utilisateur', $utilisateur, PDO::PARAM_STR);
+            $req->execute();
+            $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
+    
+            $utilisateurs = [];
+            foreach ($resultats as $row) {
+                $utilisateur = new Utilisateur(
+                    
+                    $row['NOM'],
+                    $row['PRENOM'],
+                    $row['TELEPHONE'],
+                    $row['MAIL'],
+                    $row['ADRESSE'],
+                    '', 
+                    false, 
+                    [], 
+                    $row['IDUTILISATEUR']
+                );
+                $utilisateurs[] = $utilisateur;
+            }
+    
+            return $utilisateurs;
+    
+        } catch (PDOException $e) {
+            echo "Erreur lors de la recherche des utilisateurs : " . $e->getMessage();
+            return [];
+        }
+    }
     /**
      * Get the value of nom
      */ 

@@ -1,12 +1,12 @@
 <?php
 
 $action = $_GET["action"];
-if(isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "prof"){
+if(isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "professeur"){
     switch($action){
 
         case "accueil":
             $_GET["action"] = "listeP";
-            include("Controller/SeanceController.php");
+            include("Vue/SeanceController.php");
             break;
 
     }

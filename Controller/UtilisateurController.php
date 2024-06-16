@@ -9,22 +9,32 @@ if ($action == "connexion" || $action == "deconnexion") {
                 $login = filter_input(INPUT_POST, "login", FILTER_SANITIZE_STRING);
                 $mdp = filter_input(INPUT_POST, "mdp", FILTER_SANITIZE_STRING);
                 
-                $result = Utilisateur::checkConnexion($login, $mdp);
+                $utilisateur = Utilisateur::checkConnexion($login, $mdp);
                 
-                if($result) {
-                    $_SESSION["user"] = $login;
+                if($utilisateur->getEstadmin() == 1){
                     $_SESSION["autorisation"] = "emp";
-                    header("Location: index.php?uc=eleve&action=liste");
+                    header("Location: index.php?uc=utilisateur&action=liste");
                     exit();
-                } else {
-                    /*$_SESSION["message"] = "Login ou mot de passe incorrect. Veuillez réessayer.";
-                    include("Vue/formAuth.php");*/
-                    $_SESSION["user"] = $login;
-                    $_SESSION["autorisation"] = "emp";
-                    header("Location: index.php?uc=eleve&action=liste");
-                    exit();
+                } 
+                
+                else {
+                    $role = Utilisateur::recupererRole($utilisateur->getIdutilisateur());
+                    var_dump($role);
+                    if($role["ROLE"] == "ELEVE"){
+                        $_SESSION["user"] = $utilisateur->getIdutilisateur();
+                        $_SESSION["autorisation"] = "eleve";
+                        header("Location: index.php?uc=eleve&action=accueil");
+                        exit();
+                    }
+                    else{
+                        $_SESSION["user"] = $utilisateur->getIdutilisateur();
+                        $_SESSION["autorisation"] = "professeur";
+                        header("Location: index.php?uc=professeur&action=accueil");
+                        exit();
+                    }
+               
                 }
-                break;
+            break;
     
             case "deconnexion":
                 Utilisateur::deconnexion();
@@ -40,11 +50,18 @@ if ($action == "connexion" || $action == "deconnexion") {
 } else if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
     try {
         switch($action) {
-            case "accueil":
-                $_GET["action"] = "liste";
-                include("Controller/SeanceController.php");
-                exit();
+            
+            case "liste":
+                $lesEleves = Utilisateur::getAll();
+                include("Vue/Utilisateur/cListeAdh.php");
                 break;
+
+            case "recherche":
+                $recherche = filter_input(INPUT_POST, "recherche", FILTER_SANITIZE_STRING);
+                $lesEleves = Utilisateur::rechercheUtilisateur($recherche);
+                include("Vue/Utilisateur/cListeAdh.php");
+                break;
+                
     
             case "formInscription":
                 $LesInstruments = Instrument::getAll();
@@ -159,7 +176,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                     Utilisateur::ajouterPersonne($utilisateur, "");
                 }
 
-                header("Location: index.php?uc=eleve&action=liste");
+                header("Location: index.php?uc=utilisateur&action=liste");
                 exit();
                 break;
 
@@ -169,7 +186,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                 if ($idutilisateur !== false && $idutilisateur !== null) {
                     Utilisateur::supprimerUtilisateur($idutilisateur);
                 }
-                header("Location: index.php?uc=eleve&action=liste");
+                header("Location: index.php?uc=utilisateur&action=liste");
                 exit();
                 break;
         }
