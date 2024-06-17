@@ -129,7 +129,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                         Utilisateur::modifierPersonne($utilisateur, "", $ancienRole);
                     }
 
-                    header("Location: index.php?uc=eleve&action=liste"); 
+                    header("Location: index.php?uc=utilisateur&action=liste"); 
                     exit();
                     
                     break;

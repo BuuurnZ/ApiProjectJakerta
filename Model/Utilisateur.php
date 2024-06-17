@@ -202,6 +202,35 @@ class Utilisateur
     
             $instruments = $utilisateur->getInstruments();
             foreach ($instruments as $instrument) {
+
+                $reqCheckClasse = $pdo->prepare("
+                    SELECT c.IDINSTRUMENT
+                    FROM CLASSE_ELEVE ce
+                    JOIN CLASSE c ON ce.IDCLASSE = c.IDCLASSE
+                    JOIN ELEVE e ON ce.IDELEVE = e.IDELEVE
+                    WHERE e.IDUTILISATEUR = :id_utilisateur
+                ");
+                $reqCheckClasse->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+                $reqCheckClasse->execute();
+                $classe = $reqCheckClasse->fetch(PDO::FETCH_ASSOC);
+            
+
+                if ($classe && $classe['IDINSTRUMENT'] != $instrument) {
+
+                    $reqDeleteClasse = $pdo->prepare("
+                        DELETE ce
+                        FROM CLASSE_ELEVE ce
+                        JOIN CLASSE c ON ce.IDCLASSE = c.IDCLASSE
+                        JOIN ELEVE e ON ce.IDELEVE = e.IDELEVE
+                        WHERE e.IDUTILISATEUR = :id_utilisateur
+                        AND c.IDINSTRUMENT != :id_instrument
+                    ");
+                    $reqDeleteClasse->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+                    $reqDeleteClasse->bindParam(':id_instrument', $instrument, PDO::PARAM_INT);
+                    $reqDeleteClasse->execute();
+                }
+            
+
                 $reqInstrument = $pdo->prepare("INSERT INTO INSTRUMENT_UTILISATEUR (IDINSTRUMENT, IDUTILISATEUR) VALUES (:id_instrument, :id_utilisateur)");
                 $reqInstrument->bindParam(':id_instrument', $instrument, PDO::PARAM_INT);
                 $reqInstrument->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
