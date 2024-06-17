@@ -239,6 +239,38 @@ class Classe {
         }
     }
     
+    public static function modifierUneClasse($idClasse, $listeEleves) {
+        $pdo = MonPdo::getInstance();
+    
+        try {
+
+            $pdo->beginTransaction();
+    
+
+            $reqSuppression = $pdo->prepare("DELETE FROM CLASSE_ELEVE WHERE IDCLASSE = :idClasse");
+            $reqSuppression->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
+            $reqSuppression->execute();
+    
+
+            $reqAjoutEleve = $pdo->prepare("INSERT INTO CLASSE_ELEVE (IDCLASSE, IDELEVE) VALUES (:idClasse, :idEleve)");
+    
+
+            foreach ($listeEleves as $eleve) {
+                $reqAjoutEleve->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
+                $reqAjoutEleve->bindParam(':idEleve', $eleve, PDO::PARAM_INT);
+                $reqAjoutEleve->execute();
+            }
+    
+
+            $pdo->commit();
+    
+            echo "Modification de la classe réussie.";
+        } catch (PDOException $e) {
+
+            $pdo->rollBack();
+            throw new Exception("Erreur lors de la modification de la classe : " . $e->getMessage());
+        }
+    }
     /**
      * Get the value of IDCLASSE
      */ 

@@ -37,6 +37,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                 break;
 
             case "supprimer":
+
                 if (isset($_GET['idClasse'])) {
                     $idClasse = filter_input(INPUT_GET, 'idClasse', FILTER_SANITIZE_NUMBER_INT);
                     Classe::supprimerClasse($idClasse);
@@ -46,12 +47,37 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                 exit();
                 break;
 
-            case "modifier":
-                $idClasse = filter_input(INPUT_GET, 'idclasse', FILTER_SANITIZE_NUMBER_INT);
-                $lesEleves = Classe::getElevesDansClasse($idClasse);
+            case "modifierClasse":
+
+                $idClasse = filter_input(INPUT_POST, 'idclasse', FILTER_SANITIZE_NUMBER_INT);
+
+                if (isset($_POST['eleves'])) {
+                    
+                    $idEleve = filter_input(INPUT_POST, 'eleves',  FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+                    Classe::modifierUneClasse($idClasse, $idEleve);
+                    $_SESSION['message'] = "Classe modifier avec succès ";
+                    header("Location: index.php?uc=classe&action=affichage");
+                    exit();
+                }
+                else{
+
+                    header("Location: index.php?uc=classe&action=supprimer&idClasse=$idClasse");
+                    exit();
+                }
                 include("Vue/Classe/formModifClasse.php");
                 break;
-
+            
+                case "modifier":
+                    $idClasse = filter_input(INPUT_GET, 'idclasse', FILTER_SANITIZE_NUMBER_INT);
+                    $idInstruments = filter_input(INPUT_GET, 'idinstrument', FILTER_SANITIZE_NUMBER_INT);
+                    $elevesDansLaClasse = Classe::getElevesDansClasse($idClasse);
+                    $elevesSansClasse = Eleve::getElevesSansClasseParInstrument($idInstruments);
+                    $lesEleves = array_merge($elevesDansLaClasse, $elevesSansClasse);
+    
+                    include("Vue/Classe/formModifClasse.php");
+                    break;
+    
+            
             default:
 
                 $lesClasses = Classe::getAll();
