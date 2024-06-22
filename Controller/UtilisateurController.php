@@ -11,7 +11,8 @@ if ($action == "connexion" || $action == "deconnexion") {
                 
                 $utilisateur = Utilisateur::checkConnexion($login, $mdp);
                 
-                if($utilisateur->getEstadmin() == 1){
+
+                if( $utilisateur->getEST_ADMIN() == 1){
                     $_SESSION["autorisation"] = "emp";
                     header("Location: index.php?uc=utilisateur&action=liste");
                     exit();
@@ -53,7 +54,7 @@ if ($action == "connexion" || $action == "deconnexion") {
             
             case "liste":
                 $lesEleves = Utilisateur::getAll();
-                var_dump($lesEleves);
+
                 include("Vue/Utilisateur/cListeAdh.php");
                 break;
 
@@ -66,7 +67,6 @@ if ($action == "connexion" || $action == "deconnexion") {
     
             case "formInscription":
                 $LesInstruments = Instrument::getAll();
-                $role = "";
                 include("Vue/Utilisateur/formAjoutPersonne.php");
                 break;
             
@@ -87,6 +87,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                 include("Vue/Utilisateur/formModifPersonne.php");
                 break;
 
+            
             case "modifier":
                     $idutilisateur = filter_input(INPUT_GET, "idutilisateur", FILTER_VALIDATE_INT);
                     
@@ -147,7 +148,7 @@ if ($action == "connexion" || $action == "deconnexion") {
 
             
             case "inscription":
-                $_GET["action"] = "liste";
+
                 
                 $nom = filter_input(INPUT_POST, "nom", FILTER_SANITIZE_STRING);
                 $prenom = filter_input(INPUT_POST, "prenom", FILTER_SANITIZE_STRING);
@@ -156,15 +157,19 @@ if ($action == "connexion" || $action == "deconnexion") {
                 $adresse = filter_input(INPUT_POST, "adresse", FILTER_SANITIZE_STRING);
                 $mdp = filter_input(INPUT_POST, "mdp", FILTER_SANITIZE_STRING);
                 $role = filter_input(INPUT_POST, "role", FILTER_VALIDATE_INT);
-                $instruments = isset($_POST["instruments"]) ? $_POST["instruments"] : [];
+                $instrument = filter_input(INPUT_POST, 'instruments', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+
+                if ($instrument === null || $instrument === false) {
+                    $instrument = [];
+                }
                 
-                $resultatValidation = verificationFormatSansMdp($nom, $prenom, $telephone, $mail, $adresse, $role, $instruments);
+               /* $resultatValidation = verificationFormatSansMdp($nom, $prenom, $telephone, $mail, $adresse, $role, $instruments);
                 
                 if ($resultatValidation !== true) {
                     $LesInstruments = Instrument::getAll();
                     include("Vue/Utilisateur/formAjoutPersonne.php");
                     exit();
-                }
+                }*/
                 
                 $utilisateur = new Utilisateur(
                     $nom,
@@ -174,17 +179,25 @@ if ($action == "connexion" || $action == "deconnexion") {
                     $adresse,
                     $mdp,
                     $role,
-                    $instruments,
+                    $instrument,
                     NULL
                 );
                 
+                $idNewUser = Utilisateur::ajouterPersonne($utilisateur); 
+
                 if ($role == 2) {
-                    Utilisateur::ajouterPersonne($utilisateur, "ELEVE");
+                    Eleve::ajoutEleve($idNewUser);
+                    foreach ($instrument as $instruments){
+                        Utilisateur::ajoutInstrumentUtilisateur($idNewUser, $instruments);
+                    }
+
                 } elseif ($role == 3) {
-                    Utilisateur::ajouterPersonne($utilisateur, "PROFESSEUR");
-                } else {
-                    Utilisateur::ajouterPersonne($utilisateur, "");
-                }
+                    Professeur::ajoutProfesseur($idNewUser); 
+                    foreach ($instrument as $instruments){
+                        
+                        Utilisateur::ajoutInstrumentUtilisateur($idNewUser, $instruments);
+                    }
+                } 
 
                 header("Location: index.php?uc=utilisateur&action=liste");
                 exit();
@@ -202,7 +215,7 @@ if ($action == "connexion" || $action == "deconnexion") {
         }
     } catch(Exception $ex) {
         $_SESSION["message"] = $ex->getMessage();
-        include("Vue/formAuth.php");
+        //include("Vue/formAuth.php");
         exit();
     }
 } else {

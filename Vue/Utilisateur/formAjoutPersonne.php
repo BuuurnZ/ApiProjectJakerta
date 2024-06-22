@@ -13,10 +13,10 @@ else{
                     Rôle
                 </label>
                 <select id="role" name="role" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
-                    <option value="" disabled <?php if ($role === "") echo 'selected'; ?>>Sélectionner un rôle</option>
-                    <option value="1" <?php if ($role == 1) echo 'selected'; ?>>Admin</option>
-                    <option value="2" <?php if ($role == 2) echo 'selected'; ?>>Élève</option>
-                    <option value="3" <?php if ($role == 3) echo 'selected'; ?>>Professeur</option>
+                    <option value="">Sélectionner un rôle</option>
+                    <option value="1" >Admin</option>
+                    <option value="2" >Élève</option>
+                    <option value="3" >Professeur</option>
                 </select>
                 <?php if (!empty($_SESSION['erreurs']['role'])): ?>
                     <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['role']; ?></p>

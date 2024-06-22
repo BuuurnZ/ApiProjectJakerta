@@ -91,6 +91,18 @@ class Eleve extends Utilisateur
         }
     }
 
+    public static function ajoutEleve($idUtilisateur){
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("INSERT INTO ELEVE (IDUTILISATEUR) VALUES (:idutilisateur);");
+            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_STR);
+            $req->execute();
+
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de l'ajout élève " );
+        }
+    }
+
     public static function fromUtilisateur(Utilisateur $utilisateur, $ideleve) {
         return new self(
             $ideleve,

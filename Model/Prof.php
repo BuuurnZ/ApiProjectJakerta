@@ -84,7 +84,19 @@ class Professeur extends Utilisateur
             return [];
         }
     }
-    
+
+    public static function ajoutProfesseur($idUtilisateur){
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("INSERT INTO PROFESSEUR (IDUTILISATEUR) VALUES (:idutilisateur);");
+            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_STR);
+            $req->execute();
+
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de l'ajout professeur' " );
+        }
+    }
+
     public static function fromUtilisateur(Utilisateur $utilisateur, $idprofesseur) {
         return new self(
             $idprofesseur,

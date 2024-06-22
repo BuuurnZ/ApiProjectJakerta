@@ -22,8 +22,7 @@ else{
             <div class="mb-4">
                 <label for="idInstrument" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Instrument:</label>
                 <select id="idInstrument" name="idInstrument" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" required onchange="submitForm()">
-                    <option value="" disabled selected>Choisir un instrument</option>
-                    <!-- Remplir avec les instruments disponibles -->
+
                     <?php foreach ($lesInstruments as $instrument): ?>
                         <option value="<?= $instrument->getIDINSTRUMENT() ?>" <?= (isset($idInstruments) && $idInstruments == $instrument->getIDINSTRUMENT()) ? 'selected' : '' ?>>
                             <?= $instrument->getLIBELLE() ?>
@@ -64,7 +63,7 @@ else{
                     <label for="idProfesseur" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Professeur:</label>
                     <select id="idProfesseur" name="idProfesseur" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
                         <option value="" disabled selected>Professeur disponible pour le cours</option>
-                        <!-- Remplir avec les instruments disponibles -->
+
                         <?php foreach ($profsDisponibles as $prof): ?>
                             <option value="<?= $prof->getIDPROF() ?>">
                                 <?= "{$prof->getNom()} {$prof->getPrenom()}" ?>

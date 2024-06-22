@@ -38,34 +38,18 @@ class Utilisateur
             $req = MonPdo::getInstance()->prepare("SELECT * FROM utilisateur WHERE mail = :login");
             $req->bindParam(':login', $login, PDO::PARAM_STR);
             //$req->bindParam(':mdp', $pwHash, PDO::PARAM_STR);
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
             $req->execute();
-            
+            $user = $req->fetch();
 
-            $user = $req->fetch(PDO::FETCH_ASSOC);
-    
-            if ($user) {
-
-                return new Utilisateur(
-                    $user['NOM'],
-                    $user['PRENOM'],
-                    $user['TELEPHONE'],
-                    $user['MAIL'],
-                    $user['ADRESSE'],
-                    $user['MDP'],
-                    $user['EST_ADMIN'],
-                    [], 
-                    $user['IDUTILISATEUR']
-                );
-                
-            } else {
-                throw new Exception("Login ou mot de passe incorrect. Veuillez réessayer."); 
-            }
+            return $user; 
+        
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la vérification de la connexion : " . $e->getMessage());
         }
     }
   
-    public static function ajouterPersonne($utilisateur, $role) {
+    public static function ajouterPersonne($utilisateur) {
         try {
             $pdo = MonPdo::getInstance();
             $pdo->beginTransaction();
@@ -79,7 +63,7 @@ class Utilisateur
             $adresse = $utilisateur->getAdresse();
             $mail = $utilisateur->getMail();
             $mdp = password_hash($utilisateur->getMdp(), PASSWORD_BCRYPT);
-            $est_admin = $utilisateur->getEstadmin();
+            $est_admin = $utilisateur->getEST_ADMIN();
     
             $req->bindParam(':nom', $nom);
             $req->bindParam(':prenom', $prenom);
@@ -89,36 +73,16 @@ class Utilisateur
             $req->bindParam(':mdp', $mdp);
             $req->bindParam(':est_admin', $est_admin);
             
-            $req->execute();
-            if($role != ""){
-                $id_utilisateur = $pdo->lastInsertId();
-                    
-                $reqRole = $pdo->prepare("INSERT INTO $role (IDUTILISATEUR) VALUES (:id_utilisateur)");
-                $reqRole->bindParam(':id_utilisateur', $id_utilisateur);
-                $reqRole->execute();
-
-                $instruments = $utilisateur->getInstruments();
-
-                foreach ($instruments as $instrument) {
-                    
-                    $reqInstrument = $pdo->prepare("INSERT INTO INSTRUMENT_UTILISATEUR (IDINSTRUMENT, IDUTILISATEUR) VALUES (:id_instrument, :id_utilisateur)");
-                    $reqInstrument->bindParam(':id_instrument', $instrument);
-                    $reqInstrument->bindParam(':id_utilisateur', $id_utilisateur);
-                    $reqInstrument->execute();
-                }
-
-                
-                $pdo->commit();
-            }
-            else {
-                
-                $pdo->commit();
-            }
+            $req->execute(); 
+            $idUtilisateur = $pdo->lastInsertId();
+            $pdo->commit();
             
+            
+            return $idUtilisateur; 
             
         } catch (PDOException $e) {
             $pdo->rollback();
-            throw new Exception("Erreur lors de l'ajout de l'utilisateur : " . $e->getMessage());
+            throw new Exception("Erreur lors de l'ajout de l'utilisateur : ");
         }
     }
 
@@ -157,7 +121,7 @@ class Utilisateur
             $adresse = $utilisateur->getAdresse();
             $mail = $utilisateur->getMail();
             $mdp = $utilisateur->getMdp();
-            $est_admin = $utilisateur->getEstadmin();
+            $est_admin = $utilisateur->getEST_ADMIN();
     
             $req->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
             $req->bindParam(':nom', $nom, PDO::PARAM_STR);
@@ -357,6 +321,22 @@ class Utilisateur
             return $lesResultats;
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la récupération des utilisateurs " );
+        }
+    }
+
+    public static function ajoutInstrumentUtilisateur($idUtilisateur, $idInstrument){
+        var_dump($idInstrument);
+        var_dump($idUtilisateur);
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("INSERT INTO INSTRUMENT_UTILISATEUR (IDINSTRUMENT, IDUTILISATEUR) VALUES (:idutilisateur, :idinstrument);");
+            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $req->bindParam(':idinstrument', $idInstrument, PDO::PARAM_INT);
+            $req->execute();
+
+        } catch (PDOException $e) {
+            echo($e->getMessage());
+            throw new Exception("Erreur lors de l'ajout d'instrument "  );
         }
     }
     

@@ -16,12 +16,12 @@ else{
 
     <div class="sm:ml-40">
         <form id="instrumentForm" class="mt-8 sm:mt-0 md:mt-0 lg:mt-0 ml-4 sm:ml-8 md:ml-16 lg:ml-24 max-w-lg" action="index.php?uc=classe&action=creation" method="post">
-            <!-- Form content -->
+
             <div class="flex flex-wrap -mx-3 mb-6">
                 <label for="idInstrument" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Instrument:</label>
                 <select id="idInstrument" name="idInstrument" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" required onchange="submitForm()">
                     <option value="" disabled selected>Choisir un instrument</option>
-                    <!-- Remplir avec les instruments disponibles -->
+
                     <?php foreach ($lesInstruments as $instrument): ?>
                         <option value="<?= $instrument->getIDINSTRUMENT() ?>" <?php if(isset($idInstruments) && $idInstruments == $instrument->getIDINSTRUMENT()){ echo("selected"); } ?>><?= $instrument->getLIBELLE() ?></option>
                     <?php endforeach; ?>
@@ -46,7 +46,7 @@ else{
                             <?php foreach ($lesEleves as $eleve): ?>
                                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <!-- Contenu des colonnes -->
+
                                         <div class="pl-3">
                                             <div class="text-base font-semibold"><?= $eleve->getPrenom() ?> <?= $eleve->getNom() ?></div>
                                             <div class="font-normal text-gray-500 lg:hidden">Mail: <?= $eleve->getMail() ?></div>
