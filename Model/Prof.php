@@ -55,33 +55,16 @@ class Professeur extends Utilisateur
             $req->bindParam(':heureDebut', $heureDebut);
             $req->bindParam(':heureFin', $heureFin);
     
-
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Professeur');
             $req->execute();
-            $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
-    
+            $resultats = $req->fetchAll();
 
-            $profs = [];
-            foreach ($resultats as $row) {
-                $prof = new Professeur(
-                    $row['IDPROFESSEUR'],
-                    $row['NOM'],
-                    $row['PRENOM'],
-                    '', 
-                    '', 
-                    '', 
-                    '', 
-                    0, 
-                    [], 
-                    0 
-                );
-                $profs[] = $prof;
-            }
     
-            return $profs;
+            return $resultats;
     
         } catch (PDOException $e) {
-            echo "Erreur lors de la récupération des professeurs disponibles : " . $e->getMessage();
-            return [];
+            throw new Exception("Erreur lors de la récupération des professeurs disponibles " );
+
         }
     }
 

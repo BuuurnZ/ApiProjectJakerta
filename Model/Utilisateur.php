@@ -96,7 +96,7 @@ class Utilisateur
             $req->execute();
 
             $pdo->commit();
-            echo "Utilisateur supprimé avec succès.";
+
         } catch (PDOException $e) {
             $pdo->rollback();
             throw new Exception("Erreur lors de la suppression de l'utilisateur : " . $e->getMessage());
@@ -134,102 +134,7 @@ class Utilisateur
     
             $req->execute();
     
-            /*$reqDeleteInstruments = $pdo->prepare("DELETE FROM INSTRUMENT_UTILISATEUR WHERE IDUTILISATEUR = :id_utilisateur");
-            $reqDeleteInstruments->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
-            $reqDeleteInstruments->execute();
-    
-            $instruments = $utilisateur->getInstruments();
-            foreach ($instruments as $instrument) {
-
-                /*$reqCheckClasse = $pdo->prepare("
-                    SELECT c.IDINSTRUMENT
-                    FROM CLASSE_ELEVE ce
-                    JOIN CLASSE c ON ce.IDCLASSE = c.IDCLASSE
-                    JOIN ELEVE e ON ce.IDELEVE = e.IDELEVE
-                    WHERE e.IDUTILISATEUR = :id_utilisateur
-                ");
-                $reqCheckClasse->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
-                $reqCheckClasse->execute();
-                $classe = $reqCheckClasse->fetch(PDO::FETCH_ASSOC);*/
             
-
-                /*$if ($classe && $classe['IDINSTRUMENT'] != $instrument) {
-
-                    $reqDeleteClasse = $pdo->prepare("
-                        DELETE ce
-                        FROM CLASSE_ELEVE ce
-                        JOIN CLASSE c ON ce.IDCLASSE = c.IDCLASSE
-                        JOIN ELEVE e ON ce.IDELEVE = e.IDELEVE
-                        WHERE e.IDUTILISATEUR = :id_utilisateur
-                        AND c.IDINSTRUMENT != :id_instrument
-                    ");
-                    $reqDeleteClasse->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
-                    $reqDeleteClasse->bindParam(':id_instrument', $instrument, PDO::PARAM_INT);
-                    $reqDeleteClasse->execute();
-                }*/
-            
-
-                /*$reqInstrument = $pdo->prepare("INSERT INTO INSTRUMENT_UTILISATEUR (IDINSTRUMENT, IDUTILISATEUR) VALUES (:id_instrument, :id_utilisateur)");
-                $reqInstrument->bindParam(':id_instrument', $instrument, PDO::PARAM_INT);
-                $reqInstrument->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
-                $reqInstrument->execute();
-            }*/
-    
-            /*if ($role != "") {
-    
-                if ($role == "ELEVE") {
-
-                    if ($ancienRole == "PROFESSEUR") {
-                        $reqDeleteProfesseur = $pdo->prepare("DELETE FROM PROFESSEUR WHERE IDUTILISATEUR = :id_utilisateur");
-                        $reqDeleteProfesseur->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
-                        $reqDeleteProfesseur->execute();
-                    }
-    
-
-                    if ($ancienRole != $role) {
-                        $reqEleve = $pdo->prepare("
-                            INSERT INTO ELEVE (IDUTILISATEUR)
-                            VALUES (:id_utilisateur)
-                        ");
-                        $reqEleve->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
-                        $reqEleve->execute();
-                    }
-                }
-    
-                elseif ($role == "PROFESSEUR") {
-
-                    if ($ancienRole == "ELEVE") {
-                        $reqDeleteEleve = $pdo->prepare("DELETE FROM ELEVE WHERE IDUTILISATEUR = :id_utilisateur");
-                        $reqDeleteEleve->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
-                        $reqDeleteEleve->execute();
-                    }
-    
-
-                    if ($ancienRole != $role) {
-                        $reqProfesseur = $pdo->prepare("
-                            INSERT INTO PROFESSEUR (IDUTILISATEUR)
-                            VALUES (:id_utilisateur)
-                        ");
-                        $reqProfesseur->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
-                        $reqProfesseur->execute();
-                    }
-                }
-            }
-            else {
-                if ($ancienRole != "ADMIN") {
-                    $reqDeleteRoles = $pdo->prepare("
-                        DELETE FROM PROFESSEUR
-                        WHERE IDUTILISATEUR = :id_utilisateur;
-    
-                        DELETE FROM ELEVE
-                        WHERE IDUTILISATEUR = :id_utilisateur;
-                    ");
-                    $reqDeleteRoles->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
-                    $reqDeleteRoles->execute();
-                    $reqDeleteRoles->closeCursor();
-                }
-            }*/
-    
             $pdo->commit();
         } catch (PDOException $e) {
             $pdo->rollback();

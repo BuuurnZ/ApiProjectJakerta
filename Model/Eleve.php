@@ -64,26 +64,10 @@ class Eleve extends Utilisateur
                     AND I.IDINSTRUMENT = :instrument;
             ");
             
-            $req->bindParam(':instrument', $instrument, PDO::PARAM_INT);
+            $req->bindParam(':instrument', $instrument, PDO::PARAM_INT);     
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Eleve');
             $req->execute();
-            $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
-            
-            $eleves = [];
-            foreach ($resultats as $row) {
-                $eleve = new Eleve(
-                    $row['IDELEVE'],
-                    $row['NOM'],
-                    $row['PRENOM'],
-                    $row['TELEPHONE'],
-                    $row['MAIL'],
-                    $row['ADRESSE'],
-                    null,
-                    false,
-                    [],
-                    $row['IDUTILISATEUR']
-                );
-                $eleves[] = $eleve;
-            }
+            $resultats = $req->fetchAll();
             
             return $eleves;
         } catch (PDOException $e) {
