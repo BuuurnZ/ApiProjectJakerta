@@ -26,40 +26,18 @@ class Utilisateur
         $this->idutilisateur = $idutilisateur; 
     }
 
-    public static function getAll(){
-        try {
-            $pdo = MonPdo::getInstance();
-            $req = $pdo->prepare("SELECT * FROM utilisateur");
-            $req->execute();
-            $lesResultats = $req->fetchAll(PDO::FETCH_ASSOC);
-            $utilisateurs = [];
-            foreach ($lesResultats as $resultat) {
-
-                $utilisateur = new Utilisateur(
-                    $resultat['NOM'],
-                    $resultat['PRENOM'],
-                    $resultat['TELEPHONE'],
-                    $resultat['MAIL'],
-                    $resultat['ADRESSE'],
-                    $resultat['MDP'],
-                    $resultat['EST_ADMIN'],
-                    [],
-                    $resultat['IDUTILISATEUR']
-                );
-                $utilisateurs[] = $utilisateur;
-            }
-
-            return $utilisateurs;
-        } catch (PDOException $e) {
-            throw new Exception("Erreur lors de la récupération des utilisateurs : " . $e->getMessage());
-        }
+    public static function deconnexion(){
+        unset($_SESSION['user']);
+		unset($_SESSION['autorisation']);
     }
 
     public static function checkConnexion($login, $pw) {
         try {
 
+            //$pwHash = password_hash($pw, PASSWORD_BCRYPT);
             $req = MonPdo::getInstance()->prepare("SELECT * FROM utilisateur WHERE mail = :login");
-            $req->bindParam(':login', $login);
+            $req->bindParam(':login', $login, PDO::PARAM_STR);
+            //$req->bindParam(':mdp', $pwHash, PDO::PARAM_STR);
             $req->execute();
             
 
@@ -67,22 +45,18 @@ class Utilisateur
     
             if ($user) {
 
-                if ($user) {
-
-                    return new Utilisateur(
-                        $user['NOM'],
-                        $user['PRENOM'],
-                        $user['TELEPHONE'],
-                        $user['MAIL'],
-                        $user['ADRESSE'],
-                        $user['MDP'],
-                        $user['EST_ADMIN'],
-                        [], 
-                        $user['IDUTILISATEUR']
-                    );
-                } else {
-                    throw new Exception("Login ou mot de passe incorrect. Veuillez réessayer.");
-                }
+                return new Utilisateur(
+                    $user['NOM'],
+                    $user['PRENOM'],
+                    $user['TELEPHONE'],
+                    $user['MAIL'],
+                    $user['ADRESSE'],
+                    $user['MDP'],
+                    $user['EST_ADMIN'],
+                    [], 
+                    $user['IDUTILISATEUR']
+                );
+                
             } else {
                 throw new Exception("Login ou mot de passe incorrect. Veuillez réessayer."); 
             }
@@ -298,6 +272,7 @@ class Utilisateur
             throw new Exception("Erreur lors de la modification de l'utilisateur : " . $e->getMessage());
         }
     }
+    
 
     public static function getUtilisateur($id_utilisateur) {
         try {
@@ -372,11 +347,6 @@ class Utilisateur
         }
     }
     
-    public static function deconnexion(){
-        unset($_SESSION['user']);
-		unset($_SESSION['autorisation']);
-    }
-
     public static function rechercheUtilisateur($utilisateur) {
         $utilisateur = "%" . $utilisateur . "%";
     
@@ -413,6 +383,35 @@ class Utilisateur
         } catch (PDOException $e) {
             echo "Erreur lors de la recherche des utilisateurs : " . $e->getMessage();
             return [];
+        }
+    }
+
+    public static function getAll(){
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("SELECT * FROM utilisateur");
+            $req->execute();
+            $lesResultats = $req->fetchAll(PDO::FETCH_ASSOC);
+            $utilisateurs = [];
+            foreach ($lesResultats as $resultat) {
+
+                $utilisateur = new Utilisateur(
+                    $resultat['NOM'],
+                    $resultat['PRENOM'],
+                    $resultat['TELEPHONE'],
+                    $resultat['MAIL'],
+                    $resultat['ADRESSE'],
+                    $resultat['MDP'],
+                    $resultat['EST_ADMIN'],
+                    [],
+                    $resultat['IDUTILISATEUR']
+                );
+                $utilisateurs[] = $utilisateur;
+            }
+
+            return $utilisateurs;
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la récupération des utilisateurs : " . $e->getMessage());
         }
     }
     /**

@@ -1,10 +1,7 @@
 <?php
 if($_SESSION["autorisation"] == "emp"){
   include("Vue/navbar.php");
-}
-else{
-  include("Vue/navbarEleveProf.php");
-}  ?>
+}?>
     <div class="sm:ml-40">
 
         <?php if (!empty($_SESSION['message'])): ?>

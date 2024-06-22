@@ -42,6 +42,9 @@
             case "cgu": 
                 include("Vue/CGU.php");
                 break;
+            case "instrument" : 
+                include("Controller/InstrumentController.php");
+                break;
         }
     }
      catch (Exception $ex) {

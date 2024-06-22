@@ -19,7 +19,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                 
                 else {
                     $role = Utilisateur::recupererRole($utilisateur->getIdutilisateur());
-                    var_dump($role);
+
                     if($role["ROLE"] == "ELEVE"){
                         $_SESSION["user"] = $utilisateur->getIdutilisateur();
                         $_SESSION["autorisation"] = "eleve";
