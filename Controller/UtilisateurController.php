@@ -108,8 +108,18 @@ if ($action == "connexion" || $action == "deconnexion") {
                     $adresse = filter_input(INPUT_POST, "adresse", FILTER_SANITIZE_STRING);
                     $mdp = filter_input(INPUT_POST, "mdp", FILTER_SANITIZE_STRING);
                     $role = filter_input(INPUT_POST, "role", FILTER_VALIDATE_INT);
-                    $instruments = isset($_POST["instruments"]) ? $_POST["instruments"] : [];
-                
+                    $instruments = filter_input(INPUT_POST, 'instruments', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+
+                    if ($instruments === null || $instruments === false) {
+                        $instruments = [];
+                    }
+                    if ($role == 2) {
+                        $role = "ELEVE";
+                    } elseif ($role == 3) {
+                        $role = "PROFESSEUR";
+                    } else {
+                        $role = "";
+                    }
                     /*$resultatValidation = verificationFormat($nom, $prenom, $telephone, $mail, $adresse, $mdp, $role, $instruments);
                 
                     if ($resultatValidation !== true) {
@@ -131,16 +141,86 @@ if ($action == "connexion" || $action == "deconnexion") {
                         $instruments,
                         $idutilisateur
                     );
-                    
-                    if ($role == 2) {
-                        Utilisateur::modifierPersonne($utilisateur, "ELEVE", $ancienRole);
-                    } elseif ($role == 3) {
-                        Utilisateur::modifierPersonne($utilisateur, "PROFESSEUR", $ancienRole);
-                    } else {
-                        Utilisateur::modifierPersonne($utilisateur, "", $ancienRole);
+                    Utilisateur::modifierPersonne($utilisateur);
+
+                    Utilisateur::supprimerInstrumentUtilisateur($utilisateur->getIDUTILISATEUR());
+
+                    $instruments = $utilisateur->getINSTRUMENT();
+                    foreach ($instruments as $instrument) {
+
+                        $classeInstrument = Utilisateur::checkClasseUtilisateur($utilisateur->getIDUTILISATEUR());
+
+                        if ($classeInstrument && $classeInstrument['IDINSTRUMENT'] != $instrument) {
+                            Utilisateur::deleteClasseUtilisateur($utilisateur->getIDUTILISATEUR(), $instrument);
+                        }
+                        Utilisateur::ajoutInstrumentUtilisateur($utilisateur->getIDUTILISATEUR(), $instrument);
+
                     }
 
-                    header("Location: index.php?uc=utilisateur&action=liste"); 
+                    if ($role != "") {
+    
+                        if ($role == "ELEVE") {
+        
+                            if ($ancienRole != $role) {
+
+                                if ($ancienRole == "PROFESSEUR") {
+                                    /*$reqDeleteProfesseur = $pdo->prepare("DELETE FROM PROFESSEUR WHERE IDUTILISATEUR = :id_utilisateur");
+                                    $reqDeleteProfesseur->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+                                    $reqDeleteProfesseur->execute();*/
+                                    Professeur::deleteProfesseur($utilisateur->getIDUTILISATEUR());
+                                }
+
+                                /*$reqEleve = $pdo->prepare("
+                                    INSERT INTO ELEVE (IDUTILISATEUR)
+                                    VALUES (:id_utilisateur)
+                                ");
+                                $reqEleve->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+                                $reqEleve->execute();*/
+                                Eleve::ajoutEleve($utilisateur->getIDUTILISATEUR());
+                            }
+                        }
+            
+                        elseif ($role == "PROFESSEUR") {
+        
+                            if ($ancienRole != $role) {
+
+                                if ($ancienRole == "ELEVE") {
+                                    /*$reqDeleteEleve = $pdo->prepare("DELETE FROM ELEVE WHERE IDUTILISATEUR = :id_utilisateur");
+                                    $reqDeleteEleve->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+                                    $reqDeleteEleve->execute();*/
+                                    Eleve::deleteEleve($utilisateur->getIDUTILISATEUR());
+                                }
+
+                                /*$reqProfesseur = $pdo->prepare("
+                                    INSERT INTO PROFESSEUR (IDUTILISATEUR)
+                                    VALUES (:id_utilisateur)
+                                ");
+                                $reqProfesseur->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+                                $reqProfesseur->execute();*/
+                                Professeur::ajoutProfesseur($utilisateur->getIDUTILISATEUR());
+                            }
+                        }
+                    }
+                    else {
+                        if ($ancienRole != "ADMIN") {
+                            /*$reqDeleteRoles = $pdo->prepare("
+                                DELETE FROM PROFESSEUR
+                                WHERE IDUTILISATEUR = :id_utilisateur;
+            
+                                DELETE FROM ELEVE
+                                WHERE IDUTILISATEUR = :id_utilisateur;
+                            ");
+                            $reqDeleteRoles->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+                            $reqDeleteRoles->execute();
+                            $reqDeleteRoles->closeCursor();*/
+                                //Professeur::ajoutProfesseur($utilisateur->getIDUTILISATEUR());
+
+                            Utilisateur::deleteRoleUtilisateur($utilisateur->getIDUTILISATEUR());
+                        }
+                    }
+                    
+
+                    //header("Location: index.php?uc=utilisateur&action=liste"); 
                     exit();
                     
                     break;

@@ -103,7 +103,7 @@ class Utilisateur
         }
     }
 
-    public static function modifierPersonne($utilisateur, $role, $ancienRole) {
+    public static function modifierPersonne($utilisateur) {
         $pdo = MonPdo::getInstance();
         $pdo->beginTransaction();
     
@@ -114,13 +114,13 @@ class Utilisateur
                 WHERE IDUTILISATEUR = :id_utilisateur
             ");
     
-            $id_utilisateur = $utilisateur->getIdutilisateur();
-            $nom = $utilisateur->getNom();
-            $prenom = $utilisateur->getPrenom();
-            $telephone = $utilisateur->getTelephone();
-            $adresse = $utilisateur->getAdresse();
-            $mail = $utilisateur->getMail();
-            $mdp = $utilisateur->getMdp();
+            $id_utilisateur = $utilisateur->getIDUTILISATEUR();
+            $nom = $utilisateur->getNOM();
+            $prenom = $utilisateur->getPRENOM();
+            $telephone = $utilisateur->getTELEPHONE();
+            $adresse = $utilisateur->getADRESSE();
+            $mail = $utilisateur->getMAIL();
+            $mdp = $utilisateur->getMDP();
             $est_admin = $utilisateur->getEST_ADMIN();
     
             $req->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
@@ -134,14 +134,14 @@ class Utilisateur
     
             $req->execute();
     
-            $reqDeleteInstruments = $pdo->prepare("DELETE FROM INSTRUMENT_UTILISATEUR WHERE IDUTILISATEUR = :id_utilisateur");
+            /*$reqDeleteInstruments = $pdo->prepare("DELETE FROM INSTRUMENT_UTILISATEUR WHERE IDUTILISATEUR = :id_utilisateur");
             $reqDeleteInstruments->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
             $reqDeleteInstruments->execute();
     
             $instruments = $utilisateur->getInstruments();
             foreach ($instruments as $instrument) {
 
-                $reqCheckClasse = $pdo->prepare("
+                /*$reqCheckClasse = $pdo->prepare("
                     SELECT c.IDINSTRUMENT
                     FROM CLASSE_ELEVE ce
                     JOIN CLASSE c ON ce.IDCLASSE = c.IDCLASSE
@@ -150,10 +150,10 @@ class Utilisateur
                 ");
                 $reqCheckClasse->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
                 $reqCheckClasse->execute();
-                $classe = $reqCheckClasse->fetch(PDO::FETCH_ASSOC);
+                $classe = $reqCheckClasse->fetch(PDO::FETCH_ASSOC);*/
             
 
-                if ($classe && $classe['IDINSTRUMENT'] != $instrument) {
+                /*$if ($classe && $classe['IDINSTRUMENT'] != $instrument) {
 
                     $reqDeleteClasse = $pdo->prepare("
                         DELETE ce
@@ -166,16 +166,16 @@ class Utilisateur
                     $reqDeleteClasse->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
                     $reqDeleteClasse->bindParam(':id_instrument', $instrument, PDO::PARAM_INT);
                     $reqDeleteClasse->execute();
-                }
+                }*/
             
 
-                $reqInstrument = $pdo->prepare("INSERT INTO INSTRUMENT_UTILISATEUR (IDINSTRUMENT, IDUTILISATEUR) VALUES (:id_instrument, :id_utilisateur)");
+                /*$reqInstrument = $pdo->prepare("INSERT INTO INSTRUMENT_UTILISATEUR (IDINSTRUMENT, IDUTILISATEUR) VALUES (:id_instrument, :id_utilisateur)");
                 $reqInstrument->bindParam(':id_instrument', $instrument, PDO::PARAM_INT);
                 $reqInstrument->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
                 $reqInstrument->execute();
-            }
+            }*/
     
-            if ($role != "") {
+            /*if ($role != "") {
     
                 if ($role == "ELEVE") {
 
@@ -228,7 +228,7 @@ class Utilisateur
                     $reqDeleteRoles->execute();
                     $reqDeleteRoles->closeCursor();
                 }
-            }
+            }*/
     
             $pdo->commit();
         } catch (PDOException $e) {
@@ -325,11 +325,10 @@ class Utilisateur
     }
 
     public static function ajoutInstrumentUtilisateur($idUtilisateur, $idInstrument){
-        var_dump($idInstrument);
-        var_dump($idUtilisateur);
+        
         try {
             $pdo = MonPdo::getInstance();
-            $req = $pdo->prepare("INSERT INTO INSTRUMENT_UTILISATEUR (IDINSTRUMENT, IDUTILISATEUR) VALUES (:idutilisateur, :idinstrument);");
+            $req = $pdo->prepare("INSERT INTO INSTRUMENT_UTILISATEUR (IDINSTRUMENT, IDUTILISATEUR) VALUES (:idinstrument, :idutilisateur);");
             $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_INT);
             $req->bindParam(':idinstrument', $idInstrument, PDO::PARAM_INT);
             $req->execute();
@@ -339,8 +338,83 @@ class Utilisateur
             throw new Exception("Erreur lors de l'ajout d'instrument "  );
         }
     }
-    
+    public static function supprimerInstrumentUtilisateur($idUtilisateur){
 
+        try {
+            $pdo = MonPdo::getInstance();
+            $reqDeleteInstruments = $pdo->prepare("DELETE FROM INSTRUMENT_UTILISATEUR WHERE IDUTILISATEUR = :id_utilisateur");
+            $reqDeleteInstruments->bindParam(':id_utilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $reqDeleteInstruments->execute();
+
+        } catch (PDOException $e) {
+            echo($e->getMessage());
+            throw new Exception("Erreur lors de l'ajout d'instrument "  );
+        }
+    }
+    
+    public static function checkClasseUtilisateur($idUtilisateur){
+
+        try {
+            $pdo = MonPdo::getInstance();
+            $reqCheckClasse = $pdo->prepare("
+                    SELECT c.IDINSTRUMENT
+                    FROM CLASSE_ELEVE ce
+                    JOIN CLASSE c ON ce.IDCLASSE = c.IDCLASSE
+                    JOIN ELEVE e ON ce.IDELEVE = e.IDELEVE
+                    WHERE e.IDUTILISATEUR = :id_utilisateur
+                ");
+            $reqCheckClasse->bindParam(':id_utilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $reqCheckClasse->execute();
+            $classe = $reqCheckClasse->fetch(PDO::FETCH_ASSOC);
+            return $classe;
+
+        } catch (PDOException $e) {
+            echo($e->getMessage());
+            throw new Exception("Erreur lors de l'ajout d'instrument "  );
+        }
+    }
+    public static function deleteClasseUtilisateur($idUtilisateur, $idInstrument){
+
+        try {
+            $pdo = MonPdo::getInstance();
+            $reqDeleteClasse = $pdo->prepare("
+                        DELETE ce
+                        FROM CLASSE_ELEVE ce
+                        JOIN CLASSE c ON ce.IDCLASSE = c.IDCLASSE
+                        JOIN ELEVE e ON ce.IDELEVE = e.IDELEVE
+                        WHERE e.IDUTILISATEUR = :id_utilisateur
+                        AND c.IDINSTRUMENT != :id_instrument
+                    ");
+            $reqDeleteClasse->bindParam(':id_utilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $reqDeleteClasse->bindParam(':id_instrument', $idInstrument, PDO::PARAM_INT);
+            $reqDeleteClasse->execute();
+
+        } catch (PDOException $e) {
+            echo($e->getMessage());
+            throw new Exception("Erreur lors de l'ajout d'instrument "  );
+        }
+    }
+    public static function deleteRoleUtilisateur($idUtilisateur){
+
+        try {
+            $pdo = MonPdo::getInstance();
+            $reqDeleteRoles = $pdo->prepare("
+                                DELETE FROM PROFESSEUR
+                                WHERE IDUTILISATEUR = :id_utilisateur;
+            
+                                DELETE FROM ELEVE
+                                WHERE IDUTILISATEUR = :id_utilisateur;
+                            ");
+            $reqDeleteRoles->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+            $reqDeleteRoles->execute();
+            $reqDeleteRoles->closeCursor();
+
+        } catch (PDOException $e) {
+            echo($e->getMessage());
+            throw new Exception("Erreur lors de l'ajout d'instrument "  );
+        }
+    }
+    
     /**
      * Get the value of IDUTILISATEUR
      */ 

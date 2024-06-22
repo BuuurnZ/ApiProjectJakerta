@@ -102,7 +102,17 @@ class Eleve extends Utilisateur
             throw new Exception("Erreur lors de l'ajout élève " );
         }
     }
+    public static function deleteEleve($idUtilisateur){
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("DELETE FROM ELEVE WHERE IDUTILISATEUR = :idutilisateur;");
+            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $req->execute();
 
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de l'ajout professeur' " );
+        }
+    }
     public static function fromUtilisateur(Utilisateur $utilisateur, $ideleve) {
         return new self(
             $ideleve,

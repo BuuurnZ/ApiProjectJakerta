@@ -96,6 +96,17 @@ class Professeur extends Utilisateur
             throw new Exception("Erreur lors de l'ajout professeur' " );
         }
     }
+    public static function deleteProfesseur($idUtilisateur){
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("DELETE FROM PROFESSEUR WHERE IDUTILISATEUR = :idutilisateur;");
+            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $req->execute();
+
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de l'ajout professeur' " );
+        }
+    }
 
     public static function fromUtilisateur(Utilisateur $utilisateur, $idprofesseur) {
         return new self(
