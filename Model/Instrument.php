@@ -15,6 +15,20 @@ class Instrument
         return $lesResultats;
     }
 
+    public static function supprimerInstrument($instrument){
+
+        $req = MonPdo::getInstance()->prepare("DELETE FROM `INSTRUMENT` WHERE IDINSTRUMENT = :instrument");  
+        $req->bindParam(':instrument', $instrument, PDO::PARAM_INT);
+        $req->execute();
+    }
+
+    public static function ajouterInstrument($instrument){
+
+        $req = MonPdo::getInstance()->prepare("INSERT INTO `INSTRUMENT`(`LIBELLE`) VALUES (:instrument)");  
+        $req->bindParam(':instrument', $instrument, PDO::PARAM_STR);
+        $req->execute();
+    }
+
 
     /**
      * Get the value of LIBELLE
