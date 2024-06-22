@@ -90,7 +90,25 @@ class Eleve extends Utilisateur
             throw new Exception("Erreur lors de la récupération des élèves sans classe par instrument : " . $e->getMessage());
         }
     }
-    
+
+    public static function fromUtilisateur(Utilisateur $utilisateur, $ideleve) {
+        return new self(
+            $ideleve,
+            $utilisateur->getNOM(),
+            $utilisateur->getPRENOM(),
+            $utilisateur->getTELEPHONE(),
+            $utilisateur->getMAIL(),
+            $utilisateur->getADRESSE(),
+            $utilisateur->getMDP(),
+            $utilisateur->getEST_ADMIN(),
+            $utilisateur->getINSTRUMENT(),
+            $utilisateur->getIDUTILISATEUR(),
+
+            
+        );
+
+        
+    }
     
 
     /**

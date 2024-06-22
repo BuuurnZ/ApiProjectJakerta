@@ -15,7 +15,7 @@ else{
     <?php endif; ?>
 
     <div class="w-full max-w-lg mx-auto bg-white rounded-lg shadow-md">
-        <form id="form" class="mt-10 px-6 py-8" action="index.php?uc=utilisateur&action=modifier&idutilisateur=<?= $utilisateur->getIdutilisateur() ?>" method="post">
+        <form id="form" class="mt-10 px-6 py-8" action="index.php?uc=utilisateur&action=modifier&idutilisateur=<?= $utilisateur->getIDUTILISATEUR() ?>" method="post">
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
@@ -34,13 +34,13 @@ else{
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="nom">
                             Nom
                         </label>
-                        <input id="nom" name="nom" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Jane" value="<?= $utilisateur->getNom() ?>" required>
+                        <input id="nom" name="nom" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Jane" value="<?= $utilisateur->getNOM() ?>" required>
                     </div>
                     <div class="w-full md:w-1/2 px-3">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="prenom">
                             Prénom
                         </label>
-                        <input id="prenom" name="prenom" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Doe" value="<?= $utilisateur->getPrenom() ?>" required>
+                        <input id="prenom" name="prenom" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Doe" value="<?= $utilisateur->getPRENOM() ?>" required>
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@ else{
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="mail">
                     E-mail
                 </label>
-                <input id="mail" name="mail" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="email" placeholder="user@example.me" value="<?= $utilisateur->getMail() ?>" required>
+                <input id="mail" name="mail" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="email" placeholder="user@example.me" value="<?= $utilisateur->getMAIL() ?>" required>
             </div>
 
             <div class="mb-4">
@@ -71,14 +71,14 @@ else{
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="adresse">
                     Adresse
                 </label>
-                <input id="adresse" name="adresse" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="24 place de la concorde, 75015 Paris" value="<?= $utilisateur->getAdresse() ?>" required>
+                <input id="adresse" name="adresse" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="24 place de la concorde, 75015 Paris" value="<?= $utilisateur->getADRESSE() ?>" required>
             </div>
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="telephone">
                     Téléphone
                 </label>
-                <input id="telephone" name="telephone" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="+0654899585" value="<?= $utilisateur->getTelephone() ?>" required>
+                <input id="telephone" name="telephone" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="+0654899585" value="<?= $utilisateur->getTELEPHONE() ?>" required>
             </div>
 
             <div class="mb-4 instruments-container">
@@ -88,7 +88,7 @@ else{
                 <ul>
                     <?php foreach ($LesInstruments as $instrument): ?>
                         <li>
-                            <input type="checkbox" id="instrument<?= $instrument->getIDINSTRUMENT() ?>" name="instruments[]" value="<?= $instrument->getIDINSTRUMENT() ?>" <?php if (in_array($instrument->getIDINSTRUMENT(), $utilisateur->getInstruments())) echo 'checked'; ?>>
+                            <input type="checkbox" id="instrument<?= $instrument->getIDINSTRUMENT() ?>" name="instruments[]" value="<?= $instrument->getIDINSTRUMENT() ?>" <?php if (in_array($instrument->getIDINSTRUMENT(), $utilisateur->getINSTRUMENT())) echo 'checked'; ?>>
                             <label for="instrument<?= $instrument->getIDINSTRUMENT() ?>"><?= $instrument->getLIBELLE() ?></label>
                         </li>
                     <?php endforeach; ?>

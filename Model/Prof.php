@@ -85,7 +85,25 @@ class Professeur extends Utilisateur
         }
     }
     
-	
+    public static function fromUtilisateur(Utilisateur $utilisateur, $idprofesseur) {
+        return new self(
+            $idprofesseur,
+            $utilisateur->getNOM(),
+            $utilisateur->getPRENOM(),
+            $utilisateur->getTELEPHONE(),
+            $utilisateur->getMAIL(),
+            $utilisateur->getADRESSE(),
+            $utilisateur->getMDP(),
+            $utilisateur->getEST_ADMIN(),
+            $utilisateur->getINSTRUMENT(),
+            $utilisateur->getIDUTILISATEUR(),
+
+            
+        );
+
+        
+    }
+
 	
     /**
      * Get the value of IDPROF

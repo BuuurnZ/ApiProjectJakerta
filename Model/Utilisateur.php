@@ -3,27 +3,27 @@
 class Utilisateur
 {
 
-    private $idutilisateur;
-    private $nom;
-    private $prenom;
-    private $telephone;
-    private $mail;
-    private $instruments;
-    private $adresse;
-    private $mdp;
-    private $est_admin;
+    private $IDUTILISATEUR;
+    private $NOM;
+    private $PRENOM;
+    private $TELEPHONE;
+    private $MAIL;
+    private $INSTRUMENT;
+    private $ADRESSE;
+    private $MDP;
+    private $EST_ADMIN;
 
-    public function __construct($nom, $prenom, $telephone, $mail, $adresse, $mdp, $est_admin, $instruments = [], $idutilisateur){
+    public function __construct($nom = null, $prenom = null, $telephone = null, $mail = null, $adresse = null, $mdp = null, $est_admin = null, $instruments = null, $idutilisateur = null){
         
-        $this->nom = $nom;
-        $this->prenom = $prenom;
-        $this->telephone = $telephone;
-        $this->mail = $mail;
-        $this->adresse = $adresse;
-        $this->mdp = $mdp;
-        $this->est_admin = $est_admin == 1 ? 1 : 0;
-        $this->instruments = $instruments;
-        $this->idutilisateur = $idutilisateur; 
+        $this->NOM = $nom;
+        $this->PRENOM = $prenom;
+        $this->TELEPHONE = $telephone;
+        $this->MAIL = $mail;
+        $this->ADRESSE = $adresse;
+        $this->MDP = $mdp;
+        $this->EST_ADMIN = $est_admin == 1 ? 1 : 0;
+        $this->INSTRUMENT = $instruments;
+        $this->IDUTILISATEUR = $idutilisateur; 
     }
 
     public static function deconnexion(){
@@ -290,34 +290,11 @@ class Utilisateur
                 GROUP BY U.IDUTILISATEUR, U.NOM, U.PRENOM, U.TELEPHONE, U.ADRESSE, U.MAIL, U.MDP, U.EST_ADMIN, E.IDELEVE, P.IDPROFESSEUR
             ");
             $req->bindParam(':id_utilisateur', $id_utilisateur);
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
             $req->execute();
-            $data = $req->fetch(PDO::FETCH_ASSOC);
+            $data = $req->fetch();
 
-            if ($data) {
-                $instruments = explode(', ', $data['INSTRUMENTS']);
-
-                if ($data['IDELEVE'] !== null) {
-                    return new Eleve(
-                        $data['IDELEVE'], $data['NOM'], $data['PRENOM'], $data['TELEPHONE'],
-                        $data['MAIL'], $data['ADRESSE'], $data['MDP'], $data['EST_ADMIN'],
-                        $instruments, $data['IDUTILISATEUR']
-                    );
-                } elseif ($data['IDPROFESSEUR'] !== null) {
-                    return new Professeur(
-                        $data['IDPROFESSEUR'], $data['NOM'], $data['PRENOM'], $data['TELEPHONE'],
-                        $data['MAIL'], $data['ADRESSE'], $data['MDP'], $data['EST_ADMIN'],
-                        $instruments, $data['IDUTILISATEUR'], $data['IDUTILISATEUR']
-                    );
-                } else {
-                    return new Utilisateur(
-                        $data['NOM'], $data['PRENOM'], $data['TELEPHONE'],
-                        $data['MAIL'], $data['ADRESSE'], $data['MDP'], $data['EST_ADMIN'],
-                        $instruments, $data['IDUTILISATEUR']
-                    );
-                }
-            }
-
-            return null; 
+            return $data; 
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la récupération de l'utilisateur : " . $e->getMessage());
         }
@@ -343,7 +320,7 @@ class Utilisateur
             return $data ? $data : null;
         } catch (PDOException $e) {
 
-            throw new Exception("Erreur lors de la récupération du rôle : " . $e->getMessage());
+            throw new Exception("Erreur lors de la récupération du rôle");
         }
     }
     
@@ -358,31 +335,14 @@ class Utilisateur
                 OR LOWER(U.PRENOM) LIKE :utilisateur
             ");
             $req->bindParam(':utilisateur', $utilisateur, PDO::PARAM_STR);
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
             $req->execute();
-            $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
-    
-            $utilisateurs = [];
-            foreach ($resultats as $row) {
-                $utilisateur = new Utilisateur(
-                    
-                    $row['NOM'],
-                    $row['PRENOM'],
-                    $row['TELEPHONE'],
-                    $row['MAIL'],
-                    $row['ADRESSE'],
-                    '', 
-                    false, 
-                    [], 
-                    $row['IDUTILISATEUR']
-                );
-                $utilisateurs[] = $utilisateur;
-            }
-    
-            return $utilisateurs;
+            $resultats = $req->fetchAll();
+
+            return $resultats;
     
         } catch (PDOException $e) {
-            echo "Erreur lors de la recherche des utilisateurs : " . $e->getMessage();
-            return [];
+            echo "Erreur lors de la recherche des utilisateurs ";
         }
     }
 
@@ -390,206 +350,193 @@ class Utilisateur
         try {
             $pdo = MonPdo::getInstance();
             $req = $pdo->prepare("SELECT * FROM utilisateur");
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
             $req->execute();
-            $lesResultats = $req->fetchAll(PDO::FETCH_ASSOC);
-            $utilisateurs = [];
-            foreach ($lesResultats as $resultat) {
+            $lesResultats = $req->fetchAll();
 
-                $utilisateur = new Utilisateur(
-                    $resultat['NOM'],
-                    $resultat['PRENOM'],
-                    $resultat['TELEPHONE'],
-                    $resultat['MAIL'],
-                    $resultat['ADRESSE'],
-                    $resultat['MDP'],
-                    $resultat['EST_ADMIN'],
-                    [],
-                    $resultat['IDUTILISATEUR']
-                );
-                $utilisateurs[] = $utilisateur;
-            }
-
-            return $utilisateurs;
+            return $lesResultats;
         } catch (PDOException $e) {
-            throw new Exception("Erreur lors de la récupération des utilisateurs : " . $e->getMessage());
+            throw new Exception("Erreur lors de la récupération des utilisateurs " );
         }
     }
+    
+
     /**
-     * Get the value of nom
+     * Get the value of IDUTILISATEUR
      */ 
-    public function getNom()
+    public function getIDUTILISATEUR()
     {
-        return $this->nom;
+        return $this->IDUTILISATEUR;
     }
 
     /**
-     * Set the value of nom
+     * Set the value of IDUTILISATEUR
      *
      * @return  self
      */ 
-    public function setNom($nom)
+    public function setIDUTILISATEUR($IDUTILISATEUR)
     {
-        $this->nom = $nom;
+        $this->IDUTILISATEUR = $IDUTILISATEUR;
 
         return $this;
     }
 
     /**
-     * Get the value of prenom
+     * Get the value of NOM
      */ 
-    public function getPrenom()
+    public function getNOM()
     {
-        return $this->prenom;
+        return $this->NOM;
     }
 
     /**
-     * Set the value of prenom
+     * Set the value of NOM
      *
      * @return  self
      */ 
-    public function setPrenom($prenom)
+    public function setNOM($NOM)
     {
-        $this->prenom = $prenom;
+        $this->NOM = $NOM;
 
         return $this;
     }
 
     /**
-     * Get the value of mail
+     * Get the value of PRENOM
      */ 
-    public function getMail()
+    public function getPRENOM()
     {
-        return $this->mail;
+        return $this->PRENOM;
     }
 
     /**
-     * Set the value of mail
+     * Set the value of PRENOM
      *
      * @return  self
      */ 
-    public function setMail($mail)
+    public function setPRENOM($PRENOM)
     {
-        $this->mail = $mail;
+        $this->PRENOM = $PRENOM;
 
         return $this;
     }
 
     /**
-     * Get the value of adresse
+     * Get the value of TELEPHONE
      */ 
-    public function getAdresse()
+    public function getTELEPHONE()
     {
-        return $this->adresse;
+        return $this->TELEPHONE;
     }
 
     /**
-     * Set the value of adresse
+     * Set the value of TELEPHONE
      *
      * @return  self
      */ 
-    public function setAdresse($adresse)
+    public function setTELEPHONE($TELEPHONE)
     {
-        $this->adresse = $adresse;
+        $this->TELEPHONE = $TELEPHONE;
 
         return $this;
     }
 
     /**
-     * Get the value of idutilisateur
+     * Get the value of MAIL
      */ 
-    public function getIdutilisateur()
+    public function getMAIL()
     {
-        return $this->idutilisateur;
+        return $this->MAIL;
     }
 
     /**
-     * Set the value of idutilisateur
+     * Set the value of MAIL
      *
      * @return  self
      */ 
-    public function setIdutilisateur($idutilisateur)
+    public function setMAIL($MAIL)
     {
-        $this->idutilisateur = $idutilisateur;
+        $this->MAIL = $MAIL;
 
         return $this;
     }
 
     /**
-     * Get the value of telephone
+     * Get the value of INSTRUMENT
      */ 
-    public function getTelephone()
+    public function getINSTRUMENT()
     {
-        return $this->telephone;
+        return $this->INSTRUMENT;
     }
 
     /**
-     * Set the value of telephone
+     * Set the value of INSTRUMENT
      *
      * @return  self
      */ 
-    public function setTelephone($telephone)
+    public function setINSTRUMENT($INSTRUMENT)
     {
-        $this->telephone = $telephone;
+        $this->INSTRUMENT = $INSTRUMENT;
 
         return $this;
     }
 
     /**
-     * Get the value of mdp
+     * Get the value of ADRESSE
      */ 
-    public function getMdp()
+    public function getADRESSE()
     {
-        return $this->mdp;
+        return $this->ADRESSE;
     }
 
     /**
-     * Set the value of mdp
+     * Set the value of ADRESSE
      *
      * @return  self
      */ 
-    public function setMdp($mdp)
+    public function setADRESSE($ADRESSE)
     {
-        $this->mdp = $mdp;
+        $this->ADRESSE = $ADRESSE;
 
         return $this;
     }
 
     /**
-     * Get the value of est_admin
+     * Get the value of MDP
      */ 
-    public function getEstadmin()
+    public function getMDP()
     {
-        return $this->est_admin;
+        return $this->MDP;
     }
 
     /**
-     * Set the value of est_admin
+     * Set the value of MDP
      *
      * @return  self
      */ 
-    public function setEstadmin($est_admin)
+    public function setMDP($MDP)
     {
-        $this->est_admin = $est_admin;
+        $this->MDP = $MDP;
 
         return $this;
     }
 
     /**
-     * Get the value of instrument
+     * Get the value of EST_ADMIN
      */ 
-    public function getInstruments()
+    public function getEST_ADMIN()
     {
-        return $this->instruments;
+        return $this->EST_ADMIN;
     }
 
     /**
-     * Set the value of instrument
+     * Set the value of EST_ADMIN
      *
      * @return  self
      */ 
-    public function setInstruments($instrument)
+    public function setEST_ADMIN($EST_ADMIN)
     {
-        $this->instruments = $instrument;
+        $this->EST_ADMIN = $EST_ADMIN;
 
         return $this;
     }

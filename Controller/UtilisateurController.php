@@ -53,6 +53,7 @@ if ($action == "connexion" || $action == "deconnexion") {
             
             case "liste":
                 $lesEleves = Utilisateur::getAll();
+                var_dump($lesEleves);
                 include("Vue/Utilisateur/cListeAdh.php");
                 break;
 
@@ -67,14 +68,23 @@ if ($action == "connexion" || $action == "deconnexion") {
                 $LesInstruments = Instrument::getAll();
                 $role = "";
                 include("Vue/Utilisateur/formAjoutPersonne.php");
-                exit();
                 break;
             
             case"formModifier": 
                 $utilisateur = Utilisateur::getUtilisateur(filter_input(INPUT_GET, "idutilisateur", FILTER_VALIDATE_INT));
+
+                $instruments = !empty($utilisateur->INSTRUMENTS) ? explode(', ', $utilisateur->INSTRUMENTS) : [];
+                $utilisateur->setINSTRUMENT($instruments);
+
+                if(!empty($utilisateur->IDPROFESSEUR) ){
+                    $utilisateur = Professeur::fromUtilisateur($utilisateur, $utilisateur->IDPROFESSEUR);
+                }
+                elseif(!empty($utilisateur->IDELEVE != NULL))
+                {
+                    $utilisateur = Eleve::fromUtilisateur($utilisateur, $utilisateur->IDPROFESSEUR);
+                }
                 $LesInstruments = Instrument::getAll();
                 include("Vue/Utilisateur/formModifPersonne.php");
-                exit();
                 break;
 
             case "modifier":
