@@ -54,13 +54,14 @@ if ($action == "connexion" || $action == "deconnexion") {
             
             case "liste":
                 $lesEleves = Utilisateur::getAll();
-
+                echo('Aucun utilisateur');
                 include("Vue/Utilisateur/cListeAdh.php");
                 break;
 
             case "recherche":
                 $recherche = filter_input(INPUT_POST, "recherche", FILTER_SANITIZE_STRING);
                 $lesEleves = Utilisateur::rechercheUtilisateur($recherche);
+                echo('Aucun utilisateur');
                 include("Vue/Utilisateur/cListeAdh.php");
                 break;
                 
@@ -204,7 +205,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                         }
                     }
                     
-
+                    $_SESSION["message"] = "Classe bien modifier";
                     header("Location: index.php?uc=utilisateur&action=liste"); 
                     exit();
                     
@@ -266,7 +267,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                         Utilisateur::ajoutInstrumentUtilisateur($idNewUser, $instruments);
                     }
                 } 
-
+                $_SESSION["message"] = "Utilisateur bien inscrit";
                 header("Location: index.php?uc=utilisateur&action=liste");
                 exit();
                 break;
@@ -277,6 +278,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                 if ($idutilisateur !== false && $idutilisateur !== null) {
                     Utilisateur::supprimerUtilisateur($idutilisateur);
                 }
+                $_SESSION["message"] = "Utilisateur bien supprimer";
                 header("Location: index.php?uc=utilisateur&action=liste");
                 exit();
                 break;

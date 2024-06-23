@@ -17,12 +17,14 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
             case "supprimer":
                 $instrument = filter_input(INPUT_POST, 'idinstrument', FILTER_SANITIZE_NUMBER_INT);
                 Instrument::supprimerInstrument($instrument);
+                $_SESSION["message"] = "Instrument bien supprimer";
                 header("Location: index.php?uc=instrument&action=liste"); 
                 break;
 
             case "ajouter":
                 $instrument = filter_input(INPUT_POST, 'idinstrument', FILTER_SANITIZE_NUMBER_INT);
                 Instrument::supprimerInstrument($instrument);
+                $_SESSION["message"] = "Instrument bien ajouter";
                 header("Location: index.php?uc=instrument&action=liste"); 
                 break;
                 

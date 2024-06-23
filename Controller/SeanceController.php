@@ -64,6 +64,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
                     }
 
                     Seance::ajouterSeance($idProfesseur, $idClasse, $dateSeance);
+                    $_SESSION["message"] = "Seance bien créer";
                     header("Location: index.php?uc=seance&action=liste");
                     break;
                     exit();
@@ -77,6 +78,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
                     if ($idSeance !== false && $idSeance !== null) {
                         Seance::supprimerSeance($idSeance);
                     }
+                    $_SESSION["message"] = "Seance bien supprimer";
                     header("Location: index.php?uc=seance&action=liste");
                     exit();
                     break;

@@ -62,6 +62,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                     Classe::supprimerClasse($idClasse);
                     $_SESSION['message'] = "Classe supprimée avec succès.";
                 }
+                $_SESSION['message'] = "Classe supprimer avec succès";
                 header("Location: index.php?uc=classe&action=affichage");
                 exit();
                 break;
@@ -83,7 +84,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                 }
 
                 else{
-
+                    $_SESSION['message'] = "Classe supprimer avec succès";
                     header("Location: index.php?uc=classe&action=supprimer&idClasse=$idClasse");
                     exit();
                 }

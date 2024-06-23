@@ -73,7 +73,7 @@ class Eleve extends Utilisateur
             $resultats = $req->fetchAll();
             
     
-            return $lesResultats;
+            return $resultats;
             
             return $resultats;
         } catch (PDOException $e) {
