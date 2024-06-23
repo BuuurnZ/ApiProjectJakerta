@@ -3,7 +3,7 @@ class MonPdo
 {
 
 private static $serveur='mysql:host=localhost';
-private static $bdd='dbname=conservatoire3'; 
+private static $bdd='dbname=conservatoire4'; 
 private static $user='root' ; 
 private static $mdp='root' ;
 private static $monPdo;

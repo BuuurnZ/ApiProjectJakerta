@@ -12,9 +12,21 @@ class Professeur extends Utilisateur
 
     public static function getAll(){
 
-        $req = MonPdo::getInstance()->prepare("select * from personne inner join prof on personne.ID = prof.IDPROF ;");
+        $req = MonPdo::getInstance()->prepare("
+            SELECT 
+                U.IDUTILISATEUR,
+                U.NOM,
+                U.PRENOM,
+                U.TELEPHONE,
+                U.MAIL,
+                U.ADRESSE,
+                P.IDPROFESSEUR
+            FROM 
+                UTILISATEUR U
+            INNER JOIN 
+                PROFESSEUR P ON U.IDUTILISATEUR = P.IDUTILISATEUR
+        ");
         $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Professeur');
-       
         $req->execute();
         $lesResultats = $req->fetchAll();
 
@@ -66,10 +78,11 @@ class Professeur extends Utilisateur
         }
     }
 
-    public static function ajoutProfesseur($idUtilisateur){
+    public static function ajoutProfesseur($idUtilisateur, $uid){
         try {
             $pdo = MonPdo::getInstance();
-            $req = $pdo->prepare("INSERT INTO PROFESSEUR (IDUTILISATEUR) VALUES (:idutilisateur);");
+            $req = $pdo->prepare("INSERT INTO PROFESSEUR (IDPROFESSEUR, IDUTILISATEUR) VALUES (:id, :idutilisateur);");
+            $req->bindParam(':id', $uid, PDO::PARAM_STR);
             $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_STR);
             $req->execute();
 
@@ -81,7 +94,7 @@ class Professeur extends Utilisateur
         try {
             $pdo = MonPdo::getInstance();
             $req = $pdo->prepare("DELETE FROM PROFESSEUR WHERE IDUTILISATEUR = :idutilisateur;");
-            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_STR);
             $req->execute();
 
         } catch (PDOException $e) {

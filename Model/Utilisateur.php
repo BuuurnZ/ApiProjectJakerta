@@ -54,9 +54,10 @@ class Utilisateur
             $pdo = MonPdo::getInstance();
             $pdo->beginTransaction();
             
-            $req = $pdo->prepare("INSERT INTO UTILISATEUR (NOM, PRENOM, TELEPHONE, ADRESSE, MAIL, MDP, EST_ADMIN)
-                                  VALUES (:nom, :prenom, :telephone, :adresse, :mail, :mdp, :est_admin)");
+            $req = $pdo->prepare("INSERT INTO UTILISATEUR (IDUTILISATEUR, NOM, PRENOM, TELEPHONE, ADRESSE, MAIL, MDP, EST_ADMIN)
+                                  VALUES (:id, :nom, :prenom, :telephone, :adresse, :mail, :mdp, :est_admin)");
            
+            $uid = $utilisateur->getIDUTILISATEUR();
             $nom = $utilisateur->getNom();
             $prenom = $utilisateur->getPrenom();
             $telephone = $utilisateur->getTelephone();
@@ -65,6 +66,7 @@ class Utilisateur
             $mdp = password_hash($utilisateur->getMdp(), PASSWORD_BCRYPT);
             $est_admin = $utilisateur->getEST_ADMIN();
     
+            $req->bindParam(':id', $uid);
             $req->bindParam(':nom', $nom);
             $req->bindParam(':prenom', $prenom);
             $req->bindParam(':telephone', $telephone);
@@ -74,15 +76,14 @@ class Utilisateur
             $req->bindParam(':est_admin', $est_admin);
             
             $req->execute(); 
-            $idUtilisateur = $pdo->lastInsertId();
             $pdo->commit();
             
             
-            return $idUtilisateur; 
+            return $uid; 
             
         } catch (PDOException $e) {
             $pdo->rollback();
-            throw new Exception("Erreur lors de l'ajout de l'utilisateur : ");
+            throw new Exception("Erreur lors de l'ajout de l'utilisateur ");
         }
     }
 
@@ -123,7 +124,7 @@ class Utilisateur
             $mdp = $utilisateur->getMDP();
             $est_admin = $utilisateur->getEST_ADMIN();
     
-            $req->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+            $req->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_STR);
             $req->bindParam(':nom', $nom, PDO::PARAM_STR);
             $req->bindParam(':prenom', $prenom, PDO::PARAM_STR);
             $req->bindParam(':telephone', $telephone, PDO::PARAM_STR);
@@ -177,16 +178,18 @@ class Utilisateur
                 FROM ELEVE e
                 WHERE e.IDUTILISATEUR = :id_utilisateur
                 
-                UNION
+                UNION ALL
                 
                 SELECT p.IDPROFESSEUR AS ID_ROLE, 'PROFESSEUR' AS ROLE
                 FROM PROFESSEUR p
                 WHERE p.IDUTILISATEUR = :id_utilisateur
             ");
-            $req->bindValue(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+            $req->bindValue(':id_utilisateur', $id_utilisateur, PDO::PARAM_STR);  
             $req->execute();
-            $data = $req->fetch(PDO::FETCH_ASSOC);
-            return $data ? $data : null;
+
+            $data = $req->fetch();  
+
+            return $data;
         } catch (PDOException $e) {
 
             throw new Exception("Erreur lors de la récupération du rôle");
@@ -234,12 +237,12 @@ class Utilisateur
         try {
             $pdo = MonPdo::getInstance();
             $req = $pdo->prepare("INSERT INTO INSTRUMENT_UTILISATEUR (IDINSTRUMENT, IDUTILISATEUR) VALUES (:idinstrument, :idutilisateur);");
-            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_STR);
             $req->bindParam(':idinstrument', $idInstrument, PDO::PARAM_INT);
             $req->execute();
 
         } catch (PDOException $e) {
-            echo($e->getMessage());
+
             throw new Exception("Erreur lors de l'ajout d'instrument "  );
         }
     }
@@ -248,7 +251,7 @@ class Utilisateur
         try {
             $pdo = MonPdo::getInstance();
             $reqDeleteInstruments = $pdo->prepare("DELETE FROM INSTRUMENT_UTILISATEUR WHERE IDUTILISATEUR = :id_utilisateur");
-            $reqDeleteInstruments->bindParam(':id_utilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $reqDeleteInstruments->bindParam(':id_utilisateur', $idUtilisateur, PDO::PARAM_STR);
             $reqDeleteInstruments->execute();
 
         } catch (PDOException $e) {
@@ -268,7 +271,7 @@ class Utilisateur
                     JOIN ELEVE e ON ce.IDELEVE = e.IDELEVE
                     WHERE e.IDUTILISATEUR = :id_utilisateur
                 ");
-            $reqCheckClasse->bindParam(':id_utilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $reqCheckClasse->bindParam(':id_utilisateur', $idUtilisateur, PDO::PARAM_STR);
             $reqCheckClasse->execute();
             $classe = $reqCheckClasse->fetch(PDO::FETCH_ASSOC);
             return $classe;
@@ -290,7 +293,7 @@ class Utilisateur
                         WHERE e.IDUTILISATEUR = :id_utilisateur
                         AND c.IDINSTRUMENT != :id_instrument
                     ");
-            $reqDeleteClasse->bindParam(':id_utilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $reqDeleteClasse->bindParam(':id_utilisateur', $idUtilisateur, PDO::PARAM_STR);
             $reqDeleteClasse->bindParam(':id_instrument', $idInstrument, PDO::PARAM_INT);
             $reqDeleteClasse->execute();
 
@@ -310,7 +313,7 @@ class Utilisateur
                                 DELETE FROM ELEVE
                                 WHERE IDUTILISATEUR = :id_utilisateur;
                             ");
-            $reqDeleteRoles->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+            $reqDeleteRoles->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_STR);
             $reqDeleteRoles->execute();
             $reqDeleteRoles->closeCursor();
 

@@ -61,7 +61,7 @@ class Seance
                 INSERT INTO SEANCE (IDPROFESSEUR, IDCLASSE, DATE, HEUREDEBUT, HEUREFIN)
                 VALUES (:idProfesseur, :idClasse, :date, :heureDebut, :heureFin)
             ");
-            $reqInsertSeance->bindParam(':idProfesseur', $idProfesseur, PDO::PARAM_INT);
+            $reqInsertSeance->bindParam(':idProfesseur', $idProfesseur, PDO::PARAM_STR);
             $reqInsertSeance->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
             $reqInsertSeance->bindParam(':date', $date);
             $reqInsertSeance->bindParam(':heureDebut', $heureDebut);
@@ -139,7 +139,7 @@ class Seance
             AND C.IDCLASSE = :idClasse
         ");
 
-        $reqVerifInstrument->bindParam(':idProfesseur', $idProfesseur, PDO::PARAM_INT);
+        $reqVerifInstrument->bindParam(':idProfesseur', $idProfesseur, PDO::PARAM_STR);
         $reqVerifInstrument->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
         $reqVerifInstrument->execute();
         $resultatVerifInstrument = $reqVerifInstrument->fetch(PDO::FETCH_ASSOC);

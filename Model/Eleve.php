@@ -13,22 +13,25 @@ class Eleve extends Utilisateur
     public static function getAll() {
         try {
             $req = MonPdo::getInstance()->prepare("
-                SELECT U.IDUTILISATEUR, E.IDELEVE, U.NOM, U.PRENOM, U.TELEPHONE, U.ADRESSE, U.MAIL, GROUP_CONCAT(I.LIBELLE SEPARATOR ', ') AS INSTRUMENTS
-                FROM ELEVE E
-                JOIN UTILISATEUR U ON E.IDUTILISATEUR = U.IDUTILISATEUR
-                LEFT JOIN INSTRUMENT_UTILISATEUR IU ON U.IDUTILISATEUR = IU.IDUTILISATEUR
-                LEFT JOIN INSTRUMENT I ON IU.IDINSTRUMENT = I.IDINSTRUMENT
-                GROUP BY E.IDELEVE, U.IDUTILISATEUR, U.NOM, U.PRENOM, U.TELEPHONE, U.ADRESSE, U.MAIL
+                SELECT 
+                    U.IDUTILISATEUR,
+                    U.NOM,
+                    U.PRENOM,
+                    U.TELEPHONE,
+                    U.MAIL,
+                    U.ADRESSE,
+                    E.IDELEVE
+                FROM 
+                    UTILISATEUR U
+                INNER JOIN 
+                    ELEVE E ON U.IDUTILISATEUR = E.IDUTILISATEUR
             ");
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Eleve');
             $req->execute();
-            $eleves = $req->fetchAll(PDO::FETCH_ASSOC);
-    
-            $listeEleves = [];
-            foreach ($eleves as $eleve) {
-                $instruments = explode(', ', $eleve['INSTRUMENTS']);
-                $listeEleves[] = new Eleve($eleve['IDELEVE'], $eleve['NOM'], $eleve['PRENOM'], $eleve['TELEPHONE'], $eleve['MAIL'], $eleve['ADRESSE'], '', 0, $instruments, $eleve['IDUTILISATEUR']);
-            }
-            return $listeEleves;
+            $lesResultats = $req->fetchAll();
+
+            return $lesResultats;
+
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la récupération des élèves : " . $e->getMessage());
         }
@@ -69,16 +72,20 @@ class Eleve extends Utilisateur
             $req->execute();
             $resultats = $req->fetchAll();
             
+    
+            return $lesResultats;
+            
             return $resultats;
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la récupération des élèves sans classe par instrument : " . $e->getMessage());
         }
     }
 
-    public static function ajoutEleve($idUtilisateur){
+    public static function ajoutEleve($idUtilisateur, $ideleve){
         try {
             $pdo = MonPdo::getInstance();
-            $req = $pdo->prepare("INSERT INTO ELEVE (IDUTILISATEUR) VALUES (:idutilisateur);");
+            $req = $pdo->prepare("INSERT INTO ELEVE (IDELEVE, IDUTILISATEUR) VALUES (:id, :idutilisateur);");
+            $req->bindParam(':id', $ideleve, PDO::PARAM_STR);
             $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_STR);
             $req->execute();
 
@@ -90,7 +97,7 @@ class Eleve extends Utilisateur
         try {
             $pdo = MonPdo::getInstance();
             $req = $pdo->prepare("DELETE FROM ELEVE WHERE IDUTILISATEUR = :idutilisateur;");
-            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_INT);
+            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_STR);
             $req->execute();
 
         } catch (PDOException $e) {

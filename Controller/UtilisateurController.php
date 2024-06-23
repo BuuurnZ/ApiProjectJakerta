@@ -71,15 +71,15 @@ if ($action == "connexion" || $action == "deconnexion") {
                 break;
             
             case"formModifier": 
-                $utilisateur = Utilisateur::getUtilisateur(filter_input(INPUT_GET, "idutilisateur", FILTER_VALIDATE_INT));
+                $utilisateur = Utilisateur::getUtilisateur(filter_input(INPUT_GET, "idutilisateur", FILTER_SANITIZE_STRING));
 
                 $instruments = !empty($utilisateur->INSTRUMENTS) ? explode(', ', $utilisateur->INSTRUMENTS) : [];
-                $utilisateur->setINSTRUMENT($instruments);
 
+                $utilisateur->setINSTRUMENT($instruments);
                 if(!empty($utilisateur->IDPROFESSEUR) ){
                     $utilisateur = Professeur::fromUtilisateur($utilisateur, $utilisateur->IDPROFESSEUR);
                 }
-                elseif(!empty($utilisateur->IDELEVE != NULL))
+                elseif(!empty($utilisateur->IDELEVE))
                 {
                     $utilisateur = Eleve::fromUtilisateur($utilisateur, $utilisateur->IDPROFESSEUR);
                 }
@@ -89,8 +89,8 @@ if ($action == "connexion" || $action == "deconnexion") {
 
             
             case "modifier":
-                    $idutilisateur = filter_input(INPUT_GET, "idutilisateur", FILTER_VALIDATE_INT);
-                    
+                    $idutilisateur = filter_input(INPUT_GET, "idutilisateur", FILTER_SANITIZE_STRING);
+
                     if (!$idutilisateur) {
 
                         header("Location: index.php"); 
@@ -99,7 +99,13 @@ if ($action == "connexion" || $action == "deconnexion") {
                     
                     
                     $ancienRoleData = Utilisateur::recupererRole($idutilisateur);
-                    $ancienRole = $ancienRoleData['ROLE']; 
+                    if(empty($ancienRoleData['ROLE'])){
+                        $ancienRole = "";
+                    }
+                    else{
+                        $ancienRole = $ancienRoleData['ROLE']; 
+                    }
+                    
 
                     $nom = filter_input(INPUT_POST, "nom", FILTER_SANITIZE_STRING);
                     $prenom = filter_input(INPUT_POST, "prenom", FILTER_SANITIZE_STRING);
@@ -120,6 +126,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                     } else {
                         $role = "";
                     }
+
                     /*$resultatValidation = verificationFormat($nom, $prenom, $telephone, $mail, $adresse, $mdp, $role, $instruments);
                 
                     if ($resultatValidation !== true) {
@@ -146,9 +153,10 @@ if ($action == "connexion" || $action == "deconnexion") {
                     Utilisateur::supprimerInstrumentUtilisateur($utilisateur->getIDUTILISATEUR());
 
                     $instruments = $utilisateur->getINSTRUMENT();
-                    foreach ($instruments as $instrument) {
 
-                        $classeInstrument = Utilisateur::checkClasseUtilisateur($utilisateur->getIDUTILISATEUR());
+                    $classeInstrument = Utilisateur::checkClasseUtilisateur($utilisateur->getIDUTILISATEUR());
+
+                    foreach ($instruments as $instrument) {
 
                         if ($classeInstrument && $classeInstrument['IDINSTRUMENT'] != $instrument) {
                             Utilisateur::deleteClasseUtilisateur($utilisateur->getIDUTILISATEUR(), $instrument);
@@ -157,6 +165,7 @@ if ($action == "connexion" || $action == "deconnexion") {
 
                     }
 
+
                     if ($role != "") {
     
                         if ($role == "ELEVE") {
@@ -164,12 +173,12 @@ if ($action == "connexion" || $action == "deconnexion") {
                             if ($ancienRole != $role) {
 
                                 if ($ancienRole == "PROFESSEUR") {
-                                 
+                                    var_dump("surppression");
                                     Professeur::deleteProfesseur($utilisateur->getIDUTILISATEUR());
                                 }
 
                                 
-                                Eleve::ajoutEleve($utilisateur->getIDUTILISATEUR());
+                                Eleve::ajoutEleve($utilisateur->getIDUTILISATEUR(), uniqid());
                             }
                         }
             
@@ -182,7 +191,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                                     Eleve::deleteEleve($utilisateur->getIDUTILISATEUR());
                                 }
 
-                                Professeur::ajoutProfesseur($utilisateur->getIDUTILISATEUR());
+                                Professeur::ajoutProfesseur($utilisateur->getIDUTILISATEUR(), uniqid());
                             }
                         }
                     }
@@ -226,7 +235,8 @@ if ($action == "connexion" || $action == "deconnexion") {
                     include("Vue/Utilisateur/formAjoutPersonne.php");
                     exit();
                 }*/
-                
+
+
                 $utilisateur = new Utilisateur(
                     $nom,
                     $prenom,
@@ -236,19 +246,21 @@ if ($action == "connexion" || $action == "deconnexion") {
                     $mdp,
                     $role,
                     $instrument,
-                    NULL
+                    uniqid()
                 );
                 
                 $idNewUser = Utilisateur::ajouterPersonne($utilisateur); 
 
                 if ($role == 2) {
-                    Eleve::ajoutEleve($idNewUser);
+
+                    Eleve::ajoutEleve($idNewUsern, uniqid());
                     foreach ($instrument as $instruments){
                         Utilisateur::ajoutInstrumentUtilisateur($idNewUser, $instruments);
                     }
 
                 } elseif ($role == 3) {
-                    Professeur::ajoutProfesseur($idNewUser); 
+
+                    Professeur::ajoutProfesseur($idNewUser, uniqid()); 
                     foreach ($instrument as $instruments){
                         
                         Utilisateur::ajoutInstrumentUtilisateur($idNewUser, $instruments);
@@ -271,6 +283,7 @@ if ($action == "connexion" || $action == "deconnexion") {
         }
     } catch(Exception $ex) {
         $_SESSION["message"] = $ex->getMessage();
+        echo($ex->getMessage());
         //include("Vue/formAuth.php");
         exit();
     }

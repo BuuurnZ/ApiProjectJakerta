@@ -163,7 +163,7 @@ class Classe {
             
             $reqAjoutEleve = $pdo->prepare("INSERT INTO CLASSE_ELEVE (IDCLASSE, IDELEVE) VALUES (:idClasse, :idEleve)");
             $reqAjoutEleve->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
-            $reqAjoutEleve->bindParam(':idEleve', $eleve, PDO::PARAM_INT);
+            $reqAjoutEleve->bindParam(':idEleve', $eleve, PDO::PARAM_STR);
             $reqAjoutEleve->execute();
     
 

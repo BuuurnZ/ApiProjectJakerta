@@ -101,11 +101,6 @@ else{
                 </button>
             </div>
 
-            <?php if ($utilisateur instanceof Eleve): ?>
-                <input type="hidden" id="ideleve" name="ideleve" value="<?= $utilisateur->getIDELEVE() ?>">
-            <?php elseif ($utilisateur instanceof Professeur): ?>
-                <input type="hidden" id="idprofesseur" name="idprofesseur" value="<?= $utilisateur->getIDPROFESSEUR() ?>">
-            <?php endif; ?>
 
         </form>
     </div>
