@@ -69,7 +69,7 @@ class Eleve extends Utilisateur
             $req->execute();
             $resultats = $req->fetchAll();
             
-            return $eleves;
+            return $resultats;
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la récupération des élèves sans classe par instrument : " . $e->getMessage());
         }

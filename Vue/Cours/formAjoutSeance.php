@@ -64,9 +64,10 @@ else{
                     <select id="idProfesseur" name="idProfesseur" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
                         <option value="" disabled selected>Professeur disponible pour le cours</option>
 
-                        <?php foreach ($profsDisponibles as $prof): ?>
-                            <option value="<?= $prof->getIDPROF() ?>">
-                                <?= "{$prof->getNom()} {$prof->getPrenom()}" ?>
+                        <?php foreach ($profsDispo as $prof): ?>
+                    
+                            <option value="<?= $prof->getIDPROFESSEUR() ?>">
+                                <?= "{$prof->getNOM()} {$prof->getPRENOM()}" ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

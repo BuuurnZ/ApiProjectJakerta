@@ -31,8 +31,14 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
                     $mois = date('m', $timestamp); 
                     $annee = date('Y', $timestamp); 
                     $heure = date('H:i', $timestamp);
-
+                    
                     $profsDisponibles = Professeur::getProfsDisponibles($idInstruments, $dateSeance);
+                    
+                    foreach($profsDisponibles as $prof){
+                        $prof = Professeur::fromUtilisateur($prof, $prof->IDPROFESSEUR);
+                        $profsDispo[] = $prof;
+                    }
+
                     $classesDisponibles = Classe::getClassesDisponibles($idInstruments, $dateSeance);
                 }
 
@@ -40,6 +46,22 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
                 $idClasse = filter_input(INPUT_POST, 'idClasse', FILTER_SANITIZE_NUMBER_INT);
 
                 if ($idInstruments && $dateSeance && $idProfesseur && $idClasse) {
+
+                    $date = substr($dateSeance, 0, 10);
+                    $heureDebut = substr($dateSeance, 11, 5);
+                    $heureFin = date('H:i', strtotime($dateSeance . ' + 2 hours'));
+    
+
+                    $resultatVerifInstrument = Seance::verifInstrumentProfEtClasse($idClasse, $idProfesseur);
+                    if ($resultatVerifInstrument['nbInstruments'] != 1) {
+                        throw new Exception("Le professeur et la classe doivent avoir le même instrument.");
+                    }
+
+                    $resultatConflitCours = Seance::verifConflitProfEtClasse($idClasse, $date, $heureDebut, $heureFin);
+
+                    if ($resultatVerifConflit['nbConflits'] > 0) {
+                        throw new Exception("Il y a déjà un cours prévu pour cette classe à ce créneau horaire le même jour.");
+                    }
 
                     Seance::ajouterSeance($idProfesseur, $idClasse, $dateSeance);
                     header("Location: index.php?uc=seance&action=liste");
@@ -69,6 +91,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
         }
     } catch (Exception $e) {
         $_SESSION['message'] = "Erreur : " . $e->getMessage();
+        echo($e->getMessage());
     }
 } else {
     include("Vue/formAuth.php");

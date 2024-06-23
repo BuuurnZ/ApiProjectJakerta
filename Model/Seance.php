@@ -57,49 +57,6 @@ class Seance
 
             $pdo->beginTransaction();
     
-
-            $reqVerifInstrument = $pdo->prepare("
-                SELECT COUNT(*) AS nbInstruments
-                FROM PROFESSEUR P
-                JOIN UTILISATEUR U ON P.IDUTILISATEUR = U.IDUTILISATEUR
-                JOIN INSTRUMENT_UTILISATEUR IU ON U.IDUTILISATEUR = IU.IDUTILISATEUR
-                JOIN CLASSE C ON IU.IDINSTRUMENT = C.IDINSTRUMENT
-                WHERE P.IDPROFESSEUR = :idProfesseur
-                AND C.IDCLASSE = :idClasse
-            ");
-
-            $reqVerifInstrument->bindParam(':idProfesseur', $idProfesseur, PDO::PARAM_INT);
-            $reqVerifInstrument->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
-            $reqVerifInstrument->execute();
-            $resultatVerifInstrument = $reqVerifInstrument->fetch(PDO::FETCH_ASSOC);
-    
-            if ($resultatVerifInstrument['nbInstruments'] != 1) {
-                throw new Exception("Le professeur et la classe doivent avoir le même instrument.");
-            }
-    
-
-            $reqVerifConflit = $pdo->prepare("
-                SELECT COUNT(*) AS nbConflits
-                FROM SEANCE S
-                WHERE S.IDCLASSE = :idClasse
-                AND S.DATE = :date
-                AND (
-                    (:heureDebut BETWEEN S.HEUREDEBUT AND S.HEUREFIN)
-                    OR (:heureFin BETWEEN S.HEUREDEBUT AND S.HEUREFIN)
-                )
-            ");
-            $reqVerifConflit->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
-            $reqVerifConflit->bindParam(':date', $date);
-            $reqVerifConflit->bindParam(':heureDebut', $heureDebut);
-            $reqVerifConflit->bindParam(':heureFin', $heureFin);
-            $reqVerifConflit->execute();
-            $resultatVerifConflit = $reqVerifConflit->fetch(PDO::FETCH_ASSOC);
-    
-            if ($resultatVerifConflit['nbConflits'] > 0) {
-                throw new Exception("Il y a déjà un cours prévu pour cette classe à ce créneau horaire le même jour.");
-            }
-    
-            
             $reqInsertSeance = $pdo->prepare("
                 INSERT INTO SEANCE (IDPROFESSEUR, IDCLASSE, DATE, HEUREDEBUT, HEUREFIN)
                 VALUES (:idProfesseur, :idClasse, :date, :heureDebut, :heureFin)
@@ -190,6 +147,57 @@ class Seance
         }
     }
 
+    public static function verifInstrumentProfEtClasse($idClasse, $idProfesseur){
+        try {
+            $pdo = MonPdo::getInstance();
+            $reqVerifInstrument = $pdo->prepare("
+            SELECT COUNT(*) AS nbInstruments
+            FROM PROFESSEUR P
+            JOIN UTILISATEUR U ON P.IDUTILISATEUR = U.IDUTILISATEUR
+            JOIN INSTRUMENT_UTILISATEUR IU ON U.IDUTILISATEUR = IU.IDUTILISATEUR
+            JOIN CLASSE C ON IU.IDINSTRUMENT = C.IDINSTRUMENT
+            WHERE P.IDPROFESSEUR = :idProfesseur
+            AND C.IDCLASSE = :idClasse
+        ");
+
+        $reqVerifInstrument->bindParam(':idProfesseur', $idProfesseur, PDO::PARAM_INT);
+        $reqVerifInstrument->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
+        $reqVerifInstrument->execute();
+        $resultatVerifInstrument = $reqVerifInstrument->fetch(PDO::FETCH_ASSOC);
+
+        return $resultatVerifInstrument;
+
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la vérification d'instrument" );
+        }
+    }
+
+    public static function verifConflitProfEtClasse($idClasse, $date, $heureDebut, $heureFin){
+        try {
+            $pdo = MonPdo::getInstance();
+            $reqVerifConflit = $pdo->prepare("
+                SELECT COUNT(*) AS nbConflits
+                FROM SEANCE S
+                WHERE S.IDCLASSE = :idClasse
+                AND S.DATE = :date
+                AND (
+                    (:heureDebut BETWEEN S.HEUREDEBUT AND S.HEUREFIN)
+                    OR (:heureFin BETWEEN S.HEUREDEBUT AND S.HEUREFIN)
+                )
+            ");
+            $reqVerifConflit->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
+            $reqVerifConflit->bindParam(':date', $date);
+            $reqVerifConflit->bindParam(':heureDebut', $heureDebut);
+            $reqVerifConflit->bindParam(':heureFin', $heureFin);
+            $reqVerifConflit->execute();
+            $resultatVerifConflit = $reqVerifConflit->fetch(PDO::FETCH_ASSOC);
+
+        return $resultatVerifConflit;
+
+        } catch (PDOException $e) {
+            throw new Exception("Erreur vérification conflit classe et professeur" );
+        }
+    }
     /**
      * Get the value of idSeance
      */ 

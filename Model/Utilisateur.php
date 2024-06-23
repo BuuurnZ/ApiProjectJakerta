@@ -96,7 +96,7 @@ class Utilisateur
             $req->execute();
 
             $pdo->commit();
-
+            
         } catch (PDOException $e) {
             $pdo->rollback();
             throw new Exception("Erreur lors de la suppression de l'utilisateur : " . $e->getMessage());

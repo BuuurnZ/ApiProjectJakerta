@@ -3,11 +3,11 @@
 class Professeur extends Utilisateur
 {
 
-    private $IDPROF;
+    private $IDPROFESSEUR;
     
-    public function __construct($idprof, $nom, $prenom, $telephone, $mail, $adresse, $mdp, $est_admin, $instruments = [], $idutilisateur) {
-        parent::__construct($nom, $prenom, $telephone, $mail, $adresse, $mdp, $est_admin, $instruments, $idutilisateur);
-        $this->IDPROF = $idprof;
+    public function __construct($IDPROFESSEUR=null, $NOM=null, $PRENOM=null, $TELEPHONE=null, $MAIL=null, $ADRESSE=null, $MDP=null, $EST_ADMIN=null, $INSTRUMENTS=null, $IDUTILISATEUR=null) {
+        parent::__construct($NOM, $PRENOM, $TELEPHONE, $MAIL, $ADRESSE, $MDP, $EST_ADMIN, $INSTRUMENTS, $IDUTILISATEUR);
+        $this->IDPROFESSEUR = $IDPROFESSEUR;
     }
 
     public static function getAll(){
@@ -49,16 +49,14 @@ class Professeur extends Utilisateur
                 )
             ");
     
-
             $req->bindParam(':idInstrument', $idInstrument, PDO::PARAM_INT);
             $req->bindParam(':date', $date);
             $req->bindParam(':heureDebut', $heureDebut);
             $req->bindParam(':heureFin', $heureFin);
     
-            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Professeur');
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
             $req->execute();
             $resultats = $req->fetchAll();
-
     
             return $resultats;
     
@@ -111,22 +109,23 @@ class Professeur extends Utilisateur
     }
 
 	
+
     /**
-     * Get the value of IDPROF
+     * Get the value of IDPROFESSEUR
      */ 
-    public function getIDPROF()
+    public function getIDPROFESSEUR()
     {
-        return $this->IDPROF;
+        return $this->IDPROFESSEUR;
     }
 
     /**
-     * Set the value of IDPROF
+     * Set the value of IDPROFESSEUR
      *
      * @return  self
      */ 
-    public function setIDPROF($IDPROF)
+    public function setIDPROFESSEUR($IDPROFESSEUR)
     {
-        $this->IDPROF = $IDPROF;
+        $this->IDPROFESSEUR = $IDPROFESSEUR;
 
         return $this;
     }
