@@ -115,31 +115,10 @@ class Seance
             ");
             $req->bindParam(':idSeance', $idSeance);
             $req->execute();
-            $eleveData = $req->fetchAll(PDO::FETCH_ASSOC);
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
+            $eleveData = $req->fetchAll();
     
-            $eleves = [];
-    
-
-            foreach ($eleveData as $data) {
-                $eleve = new Eleve(
-                    $data['IDELEVE'],
-                    $data['NOM'],
-                    $data['PRENOM'],
-                    $data['TELEPHONE'],
-                    $data['MAIL'],
-                    $data['ADRESSE'],
-                    "",
-                    "",
-                    [],
-                    $data['IDUTILISATEUR']
-                );
-    
-                $eleves[] = $eleve;
-            }
-    
-            $pdo->commit();
-    
-            return $eleves;
+            return $eleveData;
     
         } catch (PDOException $e) {
             $pdo->rollback();

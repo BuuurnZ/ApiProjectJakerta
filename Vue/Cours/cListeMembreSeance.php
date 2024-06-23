@@ -37,15 +37,15 @@ else{
             ?>
                 <div class="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
                     <div class="p-4">
-                        <div class="text-base font-semibold"><?= $eleve->getPrenom() ?> <?= $eleve->getNom() ?></div>
-                        <div class="text-gray-500"><?= $eleve->getMail() ?></div>
+                        <div class="text-base font-semibold"><?= $eleve->getPRENOM() ?> <?= $eleve->getNOM() ?></div>
+                        <div class="text-gray-500"><?= $eleve->getMAIL() ?></div>
                         <div class="mt-2">
                             <div class="font-semibold">Téléphone:</div>
-                            <div><?= $eleve->getTelephone() ?></div>
+                            <div><?= $eleve->getTELEPHONE() ?></div>
                         </div>
                         <div class="mt-2">
                             <div class="font-semibold">Adresse:</div>
-                            <div><?= $eleve->getAdresse() ?></div>
+                            <div><?= $eleve->getADRESSE() ?></div>
                         </div>
                     </div>
                 </div>

@@ -83,7 +83,13 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
 
                 case "afficherMembre" :
                     $idSeance = filter_input(INPUT_GET, "idSeance", FILTER_VALIDATE_INT);
-                    $lesEleves = Seance::afficherClasseSeance($idSeance);
+                    $lesElevesListe = Seance::afficherClasseSeance($idSeance);
+                  
+                    foreach($lesElevesListe as $eleve){
+                        $eleve = Eleve::fromUtilisateur($eleve, $eleve->IDELEVE);
+                        $lesEleves[] = $eleve;
+                    }
+
                     include("Vue/Cours/cListeMembreSeance.php");
                     break;
 
