@@ -56,7 +56,7 @@ else{
                         </svg>
                         <span class="ml-2 text-white text-xs font-medium">Modifier</span>
                     </a>
-                    <a class="flex items-center bg-red-600 h-10 px-3 mt-2 rounded ml-2 hover:bg-gray-300" href="index.php?uc=classe&action=supprimer&idClasse=<?= $classe->getIDCLASSE() ?>">
+                    <a class="flex items-center bg-red-600 h-10 px-3 mt-2 rounded ml-2 hover:bg-gray-300" href="index.php?uc=classe&action=supprimer&idClasse=<?= $classe->getIDCLASSE() ?>"  onclick="confirmDeletion(event)">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -69,4 +69,11 @@ else{
         ?>
     </div>
 </div>
+<script>
+        function confirmDeletion(event) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer l\'utilisateur ?')) {
+                event.preventDefault();
+            }
+        }
+    </script>
 <?php include("Vue/footer.php"); ?>
