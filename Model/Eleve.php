@@ -65,7 +65,7 @@ class Eleve extends Utilisateur
             ");
             
             $req->bindParam(':instrument', $instrument, PDO::PARAM_INT);     
-            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Eleve');
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
             $req->execute();
             $resultats = $req->fetchAll();
             

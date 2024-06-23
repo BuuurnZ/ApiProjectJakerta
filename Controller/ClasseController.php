@@ -10,7 +10,16 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
         switch ($action) {
 
             case "affichage":
-                $lesClasses = Classe::getAll();
+                $lesClassesListe = Classe::getAll();
+                foreach($lesClassesListe as $classe){
+                    $listeEleve = Classe::getElevesDansClasse($classe->getIDCLASSE());
+                    foreach($listeEleve as $eleve){
+                        $lesEleve = Eleve::fromUtilisateur($eleve, $eleve->IDELEVE);
+                        $classe->addEleve($lesEleve);
+                    }
+                    $lesClasses[] = $classe;
+                }
+
                 include("Vue/Classe/cListeClasse.php");
                 break;
 
@@ -18,7 +27,11 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                 $lesInstruments = Instrument::getAll();
                 if (isset($_POST['idInstrument'])) {
                     $idInstruments = filter_input(INPUT_POST, 'idInstrument', FILTER_SANITIZE_NUMBER_INT);
-                    $lesEleves = Eleve::getElevesSansClasseParInstrument($idInstruments);
+                    $lesElevesListe = Eleve::getElevesSansClasseParInstrument($idInstruments);
+                    foreach($lesElevesListe as $eleve){
+                        $eleve = Eleve::fromUtilisateur($eleve, $eleve->IDELEVE);
+                        $lesEleves[] = $eleve;
+                    }
                 }
                 include("Vue/Classe/formAjoutClasse.php");
                 break;
@@ -27,7 +40,13 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                 if (isset($_POST['eleves'])) {
                     $eleves = filter_input(INPUT_POST, 'eleves', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
                     $idInstrument = filter_input(INPUT_POST, 'idinstrument', FILTER_SANITIZE_NUMBER_INT);
-                    Classe::ajouterClasseAvecEleves($eleves, $idInstrument);
+
+
+                    $idClasse = Classe::ajoutClasse($idInstrument);
+                    foreach($eleves as $ideleve){
+                        Classe::ajoutClasseEleve($idClasse, $ideleve);
+
+                    }
                     $_SESSION['message'] = "Classe créée avec succès et élèves ajoutés.";
                     header("Location: index.php?uc=classe&action=affichage");
                     exit();
@@ -54,11 +73,15 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                 if (isset($_POST['eleves'])) {
                     
                     $idEleve = filter_input(INPUT_POST, 'eleves',  FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-                    Classe::modifierUneClasse($idClasse, $idEleve);
+                    Classe::supprimerClasseEleve($idClasse);
+                    foreach($idEleve as $eleve){
+                        Classe::ajoutClasseEleve($idClasse, $eleve);
+                    }
                     $_SESSION['message'] = "Classe modifier avec succès ";
                     header("Location: index.php?uc=classe&action=affichage");
                     exit();
                 }
+
                 else{
 
                     header("Location: index.php?uc=classe&action=supprimer&idClasse=$idClasse");
@@ -70,19 +93,27 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                 case "modifier":
                     $idClasse = filter_input(INPUT_GET, 'idclasse', FILTER_SANITIZE_NUMBER_INT);
                     $idInstruments = filter_input(INPUT_GET, 'idinstrument', FILTER_SANITIZE_NUMBER_INT);
-                    $elevesDansLaClasse = Classe::getElevesDansClasse($idClasse);
-                    $elevesSansClasse = Eleve::getElevesSansClasseParInstrument($idInstruments);
+
+                    $elevesDansLaClasseListe = Classe::getElevesDansClasse($idClasse);
+                    $elevesSansClasse = [];
+
+                    foreach($elevesDansLaClasseListe as $eleve){
+                        $eleve = Eleve::fromUtilisateur($eleve, $eleve->IDELEVE);
+                        $elevesDansLaClasse[] = $eleve;
+                    }
+
+                    $elevesSansClasseListe = Eleve::getElevesSansClasseParInstrument($idInstruments);
+                    foreach($elevesSansClasseListe as $eleve){
+                        $eleve = Eleve::fromUtilisateur($eleve, $eleve->IDELEVE);
+                        $elevesSansClasse[] = $eleve;
+                    }
+                    
                     $lesEleves = array_merge($elevesDansLaClasse, $elevesSansClasse);
-    
+                    
+
                     include("Vue/Classe/formModifClasse.php");
                     break;
     
-            
-            default:
-
-                $lesClasses = Classe::getAll();
-                include("Vue/Classe/cListeClasse.php");
-                break;
         }
     } catch (Exception $e) {
         $_SESSION['message'] = $e->getMessage();

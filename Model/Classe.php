@@ -3,13 +3,13 @@
 class Classe {
     private $IDCLASSE;
     private $IDINSTRUMENT;
-    private $nomInstrument;
+    private $NOMINSTRUMENT;
     private $eleves;
 
-    public function __construct($IDCLASSE, $IDINSTRUMENT, $nomInstrument, $eleves = []) {
+    public function __construct($IDCLASSE = NULL, $IDINSTRUMENT= NULL, $nomInstrument= NULL, $eleves = []) {
         $this->IDCLASSE = $IDCLASSE;
         $this->IDINSTRUMENT = $IDINSTRUMENT;
-        $this->nomInstrument = $nomInstrument;
+        $this->NOMINSTRUMENT = $nomInstrument;
         $this->eleves = $eleves;
     }
 
@@ -18,60 +18,22 @@ class Classe {
         try {
             $pdo = MonPdo::getInstance();
             $req = $pdo->prepare("
-                SELECT 
-                    C.IDCLASSE, 
-                    C.IDINSTRUMENT, 
-                    I.LIBELLE as NOMINSTRUMENT,
-                    U.IDUTILISATEUR,
-                    U.NOM, 
-                    U.PRENOM, 
-                    U.TELEPHONE, 
-                    U.ADRESSE, 
-                    U.MAIL,
-                    E.IDELEVE
-                FROM 
-                    CLASSE C
-                LEFT JOIN 
-                    CLASSE_ELEVE CE ON C.IDCLASSE = CE.IDCLASSE
-                LEFT JOIN 
-                    ELEVE E ON CE.IDELEVE = E.IDELEVE
-                LEFT JOIN 
-                    UTILISATEUR U ON E.IDUTILISATEUR = U.IDUTILISATEUR
-                LEFT JOIN
-                    INSTRUMENT I ON C.IDINSTRUMENT = I.IDINSTRUMENT
+            SELECT 
+                C.IDCLASSE, 
+                C.IDINSTRUMENT, 
+                I.LIBELLE as NOMINSTRUMENT
+            FROM 
+                CLASSE C
+            LEFT JOIN
+                INSTRUMENT I ON C.IDINSTRUMENT = I.IDINSTRUMENT
             ");
             
             $req->execute();
-            $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Classe');
+            $classes = $req->fetchAll();
     
-            $classes = [];
-            foreach ($resultats as $row) {
-                $idClasse = $row['IDCLASSE'];
-                if (!isset($classes[$idClasse])) {
-                    $classes[$idClasse] = new Classe(
-                        $row['IDCLASSE'],
-                        $row['IDINSTRUMENT'],
-                        $row['NOMINSTRUMENT']
-                    );
-                }
-                if ($row['IDUTILISATEUR'] !== null) {
-                    $eleve = new Eleve(
-                        $row['IDELEVE'],
-                        $row['NOM'],
-                        $row['PRENOM'],
-                        $row['TELEPHONE'],
-                        $row['MAIL'],
-                        $row['ADRESSE'],
-                        null,
-                        false,
-                        [],
-                        $row['IDUTILISATEUR']
-                    );
-                    $classes[$idClasse]->eleves[] = $eleve;
-                }
-            }
     
-            return array_values($classes);
+            return $classes;
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la récupération des classes et des élèves : " . $e->getMessage());
         }
@@ -144,28 +106,16 @@ class Classe {
             $req->bindParam(':date', $date);
             $req->bindParam(':heureDebut', $heureDebut);
             $req->bindParam(':heureFin', $heureFin);
-    
-
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Classe');
             $req->execute();
-            $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
-    
+            $classes = $req->fetchAll();
 
-            $classes = [];
-            foreach ($resultats as $row) {
-                $classe = new Classe(
-                    $row['IDCLASSE'],
-                    '',
-                    '',
-                    '' 
-                );
-                $classes[] = $classe;
-            }
     
             return $classes;
     
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la récupération des classes disponibles : " . $e->getMessage());
-            return [];
+
         }
     }
     
@@ -180,95 +130,62 @@ class Classe {
                 WHERE CE.IDCLASSE = :idClasse
             ");
             $req->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
             $req->execute();
-            $resultats = $req->fetchAll(PDO::FETCH_ASSOC);
-            
-            $eleves = [];
-            foreach ($resultats as $row) {
-                $eleve = new Eleve(
-                    $row['IDELEVE'], 
-                    $row['NOM'],
-                    $row['PRENOM'],
-                    $row['TELEPHONE'],
-                    $row['MAIL'],
-                    $row['ADRESSE'],
-                    null, 
-                    false, 
-                    [], 
-                    $row['IDUTILISATEUR']
-                );
-                $eleves[] = $eleve;
-            }
+            $resultats = $req->fetchAll();
     
-            return $eleves;
+            return $resultats;
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la récupération des élèves dans la classe : " . $e->getMessage());
         }
     }
 
-    public static function ajouterClasseAvecEleves($listeEleves, $idInstrument) {
-        $pdo = MonPdo::getInstance();
     
+    public static function supprimerClasseEleve($idClasse){
+
         try {
-
-            $pdo->beginTransaction();
-    
-
-            $reqClasse = $pdo->prepare("INSERT INTO CLASSE (IDINSTRUMENT) VALUES (:idInstrument)");
-            $reqClasse->bindParam(':idInstrument', $idInstrument, PDO::PARAM_INT);
-            $reqClasse->execute();
-            $idClasse = $pdo->lastInsertId();
-    
-            $reqAjoutEleve = $pdo->prepare("INSERT INTO CLASSE_ELEVE (IDCLASSE, IDELEVE) VALUES (:idClasse, :idEleve)");
-    
-            foreach ($listeEleves as $eleve) {
-
-                $reqAjoutEleve->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
-                $reqAjoutEleve->bindParam(':idEleve', $eleve, PDO::PARAM_INT);
-                $reqAjoutEleve->execute();
-            }
-    
-
-            $pdo->commit();
-    
-            echo "Classe créée avec succès et élèves ajoutés.";
-        } catch (PDOException $e) {
-
-            $pdo->rollBack();
-            throw new Exception("Erreur lors de l'ajout des élèves à la classe : " . $e->getMessage());
-        }
-    }
-    
-    public static function modifierUneClasse($idClasse, $listeEleves) {
-        $pdo = MonPdo::getInstance();
-    
-        try {
-
-            $pdo->beginTransaction();
-    
-
+            $pdo = MonPdo::getInstance();
+            
             $reqSuppression = $pdo->prepare("DELETE FROM CLASSE_ELEVE WHERE IDCLASSE = :idClasse");
             $reqSuppression->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
             $reqSuppression->execute();
     
 
-            $reqAjoutEleve = $pdo->prepare("INSERT INTO CLASSE_ELEVE (IDCLASSE, IDELEVE) VALUES (:idClasse, :idEleve)");
-    
-
-            foreach ($listeEleves as $eleve) {
-                $reqAjoutEleve->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
-                $reqAjoutEleve->bindParam(':idEleve', $eleve, PDO::PARAM_INT);
-                $reqAjoutEleve->execute();
-            }
-    
-
-            $pdo->commit();
-    
-            echo "Modification de la classe réussie.";
         } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la suppression de ClasseEleve "  );
+        }
+    }
 
-            $pdo->rollBack();
-            throw new Exception("Erreur lors de la modification de la classe : " . $e->getMessage());
+    public static function ajoutClasseEleve($idClasse, $eleve){
+
+        try {
+            $pdo = MonPdo::getInstance();
+            
+            $reqAjoutEleve = $pdo->prepare("INSERT INTO CLASSE_ELEVE (IDCLASSE, IDELEVE) VALUES (:idClasse, :idEleve)");
+            $reqAjoutEleve->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
+            $reqAjoutEleve->bindParam(':idEleve', $eleve, PDO::PARAM_INT);
+            $reqAjoutEleve->execute();
+    
+
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de l'ajout de l'élève "  );
+        }
+    }
+    public static function ajoutClasse($idInstrument){
+
+        try {
+            $pdo = MonPdo::getInstance();
+            
+            $reqClasse = $pdo->prepare("INSERT INTO CLASSE (IDINSTRUMENT) VALUES (:idInstrument)");
+            $reqClasse->bindParam(':idInstrument', $idInstrument, PDO::PARAM_INT);
+            $reqClasse->execute();
+
+            $idClasse = $pdo->lastInsertId();
+    
+            return $idClasse;
+
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de l'ajout de l'élève "  );
         }
     }
     /**
@@ -311,25 +228,6 @@ class Classe {
         return $this;
     }
 
-    /**
-     * Get the value of nomInstrument
-     */ 
-    public function getNomInstrument()
-    {
-        return $this->nomInstrument;
-    }
-
-    /**
-     * Set the value of nomInstrument
-     *
-     * @return  self
-     */ 
-    public function setNomInstrument($nomInstrument)
-    {
-        $this->nomInstrument = $nomInstrument;
-
-        return $this;
-    }
 
     /**
      * Get the value of eleves
@@ -344,9 +242,34 @@ class Classe {
      *
      * @return  self
      */ 
+
     public function setEleves($eleves)
     {
         $this->eleves = $eleves;
+
+        return $this;
+    }
+    public function addEleve($eleve) {
+        $this->eleves[] = $eleve;
+    }
+
+
+    /**
+     * Get the value of NOMINSTRUMENT
+     */ 
+    public function getNOMINSTRUMENT()
+    {
+        return $this->NOMINSTRUMENT;
+    }
+
+    /**
+     * Set the value of NOMINSTRUMENT
+     *
+     * @return  self
+     */ 
+    public function setNOMINSTRUMENT($NOMINSTRUMENT)
+    {
+        $this->NOMINSTRUMENT = $NOMINSTRUMENT;
 
         return $this;
     }

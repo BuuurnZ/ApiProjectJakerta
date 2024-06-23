@@ -35,12 +35,14 @@ else{
     <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
         <?php
         foreach ($lesClasses as $classe) {
+
+            //var_dump($classe);
             $nombreEleves = count($classe->getEleves());
         ?>
             <div class="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
                 <div class="p-4">
                     <div class="text-base font-semibold">Classe <?= $classe->getIDCLASSE() ?></div>
-                    <div class="text-gray-500"><?= $classe->getNomInstrument() ?></div>
+                    <div class="text-gray-500"><?= $classe->getNOMINSTRUMENT() ?></div>
                     <div class="mt-2">
                         <div class="font-semibold">Nombre d'élèves:</div>
                         <div><?= $nombreEleves ?></div>
