@@ -6,7 +6,7 @@ else{
   include("Vue/navbarEleveProf.php");
 }
 ?>
-<section class="bg-cover bg-center min-h-screen overflow-hidden p-12 bg-violet-600" style="background-image: url('Images/music.jpg');">
+<section class="bg-cover bg-center min-h-screen overflow-hidden p-12">
     <?php if (!empty($_SESSION['message'])): ?>
         <div class="m-2 bg-red-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
             <?php echo $_SESSION['message']; ?>

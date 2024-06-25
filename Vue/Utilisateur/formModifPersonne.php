@@ -5,7 +5,7 @@ if($_SESSION["autorisation"] == "emp"){
 else{
   include("Vue/navbarEleveProf.php");
 }  ?>
-<section style="background-image: url('Images/music.jpg');" class="bg-cover h-screen overflow-auto p-12 bg-violet-600">
+<section class="bg-cover h-screen overflow-auto p-12">
 
     <?php if (!empty($_SESSION['message'])): ?>
         <div class="m-2 bg-red-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
@@ -59,16 +59,16 @@ else{
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="mdp">
-                    Mot de passe
+                    Mot de passe (ne rien mettre pour ne pas modifier)
                 </label>
-                <input id="mdp" name="mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="password" placeholder="••••••••" value="<?= $utilisateur->getMDP() ?>" required>
+                <input id="mdp" name="mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="password" placeholder="••••••••">
             </div>
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm_mdp">
                     Confirmer Mot de passe
                 </label>
-                <input id="confirm_mdp" name="confirm_mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="password" placeholder="••••••••" value="<?= $utilisateur->getMDP() ?>" required>
+                <input id="confirm_mdp" name="confirm_mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="password" placeholder="••••••••" >
                 <p id="mdp_error" class="text-red-500 text-xs italic" style="display: none;">Les mots de passe ne correspondent pas.</p>
             </div>
 

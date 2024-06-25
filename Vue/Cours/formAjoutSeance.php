@@ -19,7 +19,7 @@ else{
         <?php unset($_SESSION['Sucess']); ?>
     <?php endif; ?>
 
-<section class="bg-cover min-h-screen flex items-center justify-center bg-violet-600">
+<section class="bg-cover min-h-screen flex items-center justify-center">
 
 
 

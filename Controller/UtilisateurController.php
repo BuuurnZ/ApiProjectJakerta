@@ -8,10 +8,8 @@ if ($action == "connexion" || $action == "deconnexion") {
             case "connexion":
                 $login = filter_input(INPUT_POST, "login", FILTER_SANITIZE_STRING);
                 $mdp = filter_input(INPUT_POST, "mdp", FILTER_SANITIZE_STRING);
-
-                $mdpHash = password_hash($mdp, PASSWORD_BCRYPT);
-
-                $utilisateur = Utilisateur::tentativeConnexion($login, $mdpHash);
+    
+                $utilisateur = Utilisateur::tentativeConnexion($login, $mdp);
                 
                 if($utilisateur){
                     if( $utilisateur->getEST_ADMIN() == 1 ){
@@ -126,6 +124,31 @@ if ($action == "connexion" || $action == "deconnexion") {
                     if ($instruments === null || $instruments === false) {
                         $instruments = [];
                     }
+                    
+                    if($mdp == NULL){
+                        $resultatValidation = verificationFormatSansMdp($nom, $prenom, $telephone, $mail, $adresse, $role, $instruments);
+                
+                        if ($resultatValidation !== true) {
+                            $utilisateur = Utilisateur::getUtilisateur(filter_input(INPUT_GET, "idutilisateur", FILTER_SANITIZE_STRING));
+                            $LesInstruments = Instrument::getAll();
+                            $instruments = !empty($utilisateur->INSTRUMENTS) ? explode(', ', $utilisateur->INSTRUMENTS) : [];
+                            $utilisateur->setINSTRUMENT($instruments);
+                            include("Vue/Utilisateur/formModifPersonne.php"); 
+                            exit();
+                    }
+                    }else{
+                        $resultatValidation = verificationFormat($nom, $prenom, $telephone, $mail, $adresse, $mdp, $role, $instruments);
+                        
+                        if ($resultatValidation !== true) {
+                            $utilisateur = Utilisateur::getUtilisateur(filter_input(INPUT_GET, "idutilisateur", FILTER_SANITIZE_STRING));
+                            $LesInstruments = Instrument::getAll();
+                            $instruments = !empty($utilisateur->INSTRUMENTS) ? explode(', ', $utilisateur->INSTRUMENTS) : [];
+                            $utilisateur->setINSTRUMENT($instruments);
+                            include("Vue/Utilisateur/formModifPersonne.php"); 
+                            exit();
+                        }
+    
+                    }
                     if ($role == 2) {
                         $role = "ELEVE";
                     } elseif ($role == 3) {
@@ -133,17 +156,6 @@ if ($action == "connexion" || $action == "deconnexion") {
                     } else {
                         $role = "";
                     }
-
-                    $resultatValidation = verificationFormat($nom, $prenom, $telephone, $mail, $adresse, $mdp, $role, $instruments);
-                
-                    if ($resultatValidation !== true) {
-                        $utilisateur = Utilisateur::getUtilisateur(filter_input(INPUT_GET, "idutilisateur", FILTER_VALIDATE_INT));
-                        $LesInstruments = Instrument::getAll();
-                        include("Vue/Utilisateur/formModifPersonne.php"); 
-                        exit();
-                    }
-
-                
                     $utilisateur = new Utilisateur(
                         $nom,
                         $prenom,
@@ -155,7 +167,13 @@ if ($action == "connexion" || $action == "deconnexion") {
                         $instruments,
                         $idutilisateur
                     );
-                    Utilisateur::modifierPersonne($utilisateur);
+                    if($mdp == NULL){
+                        Utilisateur::modifierPersonneSansMdp($utilisateur);
+                    }else{
+                        Utilisateur::modifierPersonne($utilisateur);
+
+                    }
+
 
                     Utilisateur::supprimerInstrumentUtilisateur($utilisateur->getIDUTILISATEUR());
 
@@ -211,7 +229,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                         }
                     }
                     
-                    $_SESSION['Sucess'] = "Classe bien modifier";
+                    $_SESSION['Sucess'] = "Utilisateur bien modifer";
                     header("Location: index.php?uc=utilisateur&action=liste"); 
                     exit();
                     

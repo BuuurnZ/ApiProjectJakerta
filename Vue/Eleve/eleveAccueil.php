@@ -43,7 +43,10 @@ else{
         </div>
         
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-            <?php foreach ($lesCours as $cours) { ?>
+            <?php 
+            if (isset($lesCours)){
+
+            foreach ($lesCours as $cours) { ?>
                 <div class="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-lg relative transition-none">
                     <div class="p-4">
                         <div class="text-base font-semibold"><?= $cours->getInstrument() ?></div>
@@ -61,20 +64,11 @@ else{
                             <div><?= htmlspecialchars($cours->getHeureFin()) ?></div>
                         </div>
                     </div>
-                    <div class="absolute bottom-4 right-4 sm:static sm:flex sm:justify-end sm:p-4">
-                        <div class="flex flex-col space-y-2">
-                            <a class="flex items-center bg-blue-500 h-10 px-3 rounded hover:bg-gray-300" href="index.php?uc=seance&action=afficherMembre&idSeance=<?= $cours->getIdSeance() ?>">
-                                <i class="fas fa-eye h-4 w-4"></i>
-                                <span class="ml-2 text-white text-xs font-medium">Élève</span>
-                            </a>
-                            <a class="flex items-center bg-red-500 h-10 px-3 rounded hover:bg-gray-300" href="index.php?uc=seance&action=supprimer&idSeance=<?= $cours->getIdSeance() ?>" >
-                                <i class="fas fa-trash-alt h-4 w-4"></i>
-                                <span class="ml-2 text-white text-xs font-medium">Supprimer</span>
-                            </a>
-                        </div>
-                    </div>
                 </div>
-            <?php } ?>
+            
+            <?php }
+            }
+            ?>
         </div>
     </div>
     <?php include("Vue/footer.php"); ?>

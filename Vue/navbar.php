@@ -53,7 +53,7 @@
                 <img src="Images/clipboard.png" alt="Icône Liste Classe" class="mr-2">  
                     <span class="ml-3 text-sm font-medium">Adhérents</span>
                 </button>
-                <div id="adherent-dropdown" class="flex-col w-full">
+                <div id="adherent-dropdown" class="hidden flex-col w-full">
                     <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=utilisateur&action=liste">
                         <img src="Images/list.png" alt="Icône Liste Adhérents">  
                         <span class="text-sm font-medium ml-2">Liste Adhérents</span>
@@ -89,7 +89,7 @@
         <span class="ml-2 text-sm font-medium">Menu</span>
     </button>
 
-    <div id="dropdown-menu" class="hidden flex flex-col items-center w-40 bg-gray-100 rounded shadow-lg absolute top-12 right-0 z-20">
+    <div id="dropdown-menu" class="hiddenflex flex-col items-center w-40 bg-gray-100 rounded shadow-lg absolute top-12 right-0 z-20">
         <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=seance&action=liste">
             <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -118,7 +118,6 @@
             </button>
             <div id="class-dropdown-mobile" class="hidden flex-col w-full">
                 <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=classe&action=affichage">
-                
                     <span class="ml-12 text-sm font-medium">Liste Classe</span>
                 </a>
                 <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=classe&action=creation">

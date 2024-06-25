@@ -31,17 +31,25 @@ class Utilisateur
 		unset($_SESSION['autorisation']);
     }
 
-    public static function tentativeConnexion($login, $mdpHash) {
+    public static function tentativeConnexion($login, $mdp) {
         try {
 
             $req = MonPdo::getInstance()->prepare("SELECT * FROM utilisateur WHERE mail = :mail");
             $req->bindParam(':mail', $login, PDO::PARAM_STR);
-            //$req->bindParam(':mdp', $mdpHash, PDO::PARAM_STR);
             $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
             $req->execute();
             $user = $req->fetch();
+        
+            if ($user) {
 
-            return $user; 
+                if (password_verify($mdp, $user->getMDP())) {
+                    return $user; 
+                } else {
+                    return false; 
+                }
+            } else {
+                return false;
+            }
         
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la vérification de la connexion");
@@ -123,7 +131,10 @@ class Utilisateur
             $adresse = $utilisateur->getADRESSE();
             $mail = $utilisateur->getMAIL();
             $mdp = $utilisateur->getMDP();
+            $mdpHash = password_hash($mdp, PASSWORD_BCRYPT);
             $est_admin = $utilisateur->getEST_ADMIN();
+            var_dump($mdp);
+                var_dump($mdpHash);
     
             $req->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_STR);
             $req->bindParam(':nom', $nom, PDO::PARAM_STR);
@@ -131,7 +142,7 @@ class Utilisateur
             $req->bindParam(':telephone', $telephone, PDO::PARAM_STR);
             $req->bindParam(':adresse', $adresse, PDO::PARAM_STR);
             $req->bindParam(':mail', $mail, PDO::PARAM_STR);
-            $req->bindParam(':mdp', $mdp, PDO::PARAM_STR);
+            $req->bindParam(':mdp', $mdpHash, PDO::PARAM_STR);
             $req->bindParam(':est_admin', $est_admin, PDO::PARAM_BOOL);
     
             $req->execute();
@@ -323,6 +334,43 @@ class Utilisateur
             throw new Exception("Erreur lors de l'ajout d'instrument "  );
         }
     }
+    public static function modifierPersonneSansMdp($utilisateur) {
+        $pdo = MonPdo::getInstance();
+        $pdo->beginTransaction();
+    
+        try {
+            $req = $pdo->prepare("
+                UPDATE UTILISATEUR
+                SET NOM = :nom, PRENOM = :prenom, TELEPHONE = :telephone, ADRESSE = :adresse, MAIL = :mail, EST_ADMIN = :est_admin
+                WHERE IDUTILISATEUR = :id_utilisateur
+            ");
+    
+            $id_utilisateur = $utilisateur->getIDUTILISATEUR();
+            $nom = $utilisateur->getNOM();
+            $prenom = $utilisateur->getPRENOM();
+            $telephone = $utilisateur->getTELEPHONE();
+            $adresse = $utilisateur->getADRESSE();
+            $mail = $utilisateur->getMAIL();
+            $est_admin = $utilisateur->getEST_ADMIN();
+    
+            $req->bindParam(':id_utilisateur', $id_utilisateur, PDO::PARAM_STR);
+            $req->bindParam(':nom', $nom, PDO::PARAM_STR);
+            $req->bindParam(':prenom', $prenom, PDO::PARAM_STR);
+            $req->bindParam(':telephone', $telephone, PDO::PARAM_STR);
+            $req->bindParam(':adresse', $adresse, PDO::PARAM_STR);
+            $req->bindParam(':mail', $mail, PDO::PARAM_STR);
+            $req->bindParam(':est_admin', $est_admin, PDO::PARAM_BOOL);
+    
+            $req->execute();
+    
+            
+            $pdo->commit();
+        } catch (PDOException $e) {
+            $pdo->rollback();
+            throw new Exception("Erreur lors de la modification de l'utilisateur : " . $e->getMessage());
+        }
+    }
+    
     
     /**
      * Get the value of IDUTILISATEUR
