@@ -84,7 +84,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                 }
 
                 else{
-                    $_SESSION['Sucess'] = "Classe supprimer avec succès";
+
                     header("Location: index.php?uc=classe&action=supprimer&idClasse=$idClasse");
                     exit();
                 }

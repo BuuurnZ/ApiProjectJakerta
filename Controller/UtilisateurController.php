@@ -27,10 +27,7 @@ if ($action == "connexion" || $action == "deconnexion") {
                             exit();
                         }
                         else{
-                            $_SESSION["user"] = $utilisateur->getIDUTILISATEUR();
-                            $_SESSION["autorisation"] = "professeur";
-                            header("Location: index.php?uc=professeur&action=accueil");
-                            exit();
+                            throw new Exception("L'espace Professeur n'est pas encore disponible ");
                         }
                 }
             

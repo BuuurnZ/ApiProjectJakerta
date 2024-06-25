@@ -12,6 +12,7 @@ else{
         </div>
         <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
+
     <?php if (!empty($_SESSION['Sucess'])): ?>
         <div class="m-2 bg-green-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
             <?php echo $_SESSION['Sucess']; ?>
@@ -63,11 +64,11 @@ else{
                     <div class="absolute bottom-4 right-4 sm:static sm:flex sm:justify-end sm:p-4">
                         <div class="flex flex-col space-y-2">
                             <a class="flex items-center bg-blue-500 h-10 px-3 rounded hover:bg-gray-300" href="index.php?uc=seance&action=afficherMembre&idSeance=<?= $cours->getIdSeance() ?>">
-                                <i class="fas fa-eye h-4 w-4"></i>
+                                <img src="Images/eye.png" alt="Icône Liste Adhérents">  
                                 <span class="ml-2 text-white text-xs font-medium">Élève</span>
                             </a>
                             <a class="flex items-center bg-red-500 h-10 px-3 rounded hover:bg-gray-300" href="index.php?uc=seance&action=supprimer&idSeance=<?= $cours->getIdSeance() ?>"  onclick="confirmDeletion(event)">
-                                <i class="fas fa-trash-alt h-4 w-4"></i>
+                                <img src="Images/bin.png" alt="Icône Liste Adhérents">  
                                 <span class="ml-2 text-white text-xs font-medium">Supprimer</span>
                             </a>
                         </div>

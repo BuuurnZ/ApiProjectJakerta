@@ -54,16 +54,13 @@ if($_SESSION["autorisation"] == "emp"){
                     </div>
                     <div class="absolute bottom-4 right-4 sm:static sm:flex sm:justify-end sm:p-4">
                         <a class="flex items-center bg-yellow-500 h-10 px-3 mt-2 rounded hover:bg-yellow-600" href="index.php?uc=utilisateur&action=formModifier&idutilisateur=<?= $eleve->getIdutilisateur() ?>">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.5 21h-11a2.5 2.5 0 01-2.5-2.5v-11A2.5 2.5 0 016.5 5h11a2.5 2.5 0 012.5 2.5v11a2.5 2.5 0 01-2.5 2.5z" />
-                            </svg>
+                            <img src="Images/pen.png" alt="Icône Liste Adhérents">  
+                            
                             <span class="ml-2 text-white text-xs font-medium">Modifier</span>
                         </a>
                         <a class="flex items-center bg-red-600 h-10 px-3 mt-2 rounded ml-2 hover:bg-gray-300" href="index.php?uc=utilisateur&action=supprimer&idutilisateur=<?= $eleve->getIdutilisateur() ?>"  onclick="confirmDeletion(event)">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            <img src="Images/bin.png" alt="Icône Liste Adhérents">  
+
                             <span class="ml-2 text-white text-xs font-medium">Supprimer</span>
                         </a>
                     </div>
