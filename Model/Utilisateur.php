@@ -39,18 +39,8 @@ class Utilisateur
             $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
             $req->execute();
             $user = $req->fetch();
-        
-            if ($user) {
-
-                if (password_verify($mdp, $user->getMDP())) {
-                    return $user; 
-                } else {
-                    return false; 
-                }
-            } else {
-                return false;
-            }
-        
+            return $user;
+            
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la vérification de la connexion");
         }

@@ -10,8 +10,8 @@ if ($action == "connexion" || $action == "deconnexion") {
                 $mdp = filter_input(INPUT_POST, "mdp", FILTER_SANITIZE_STRING);
     
                 $utilisateur = Utilisateur::tentativeConnexion($login, $mdp);
-                
-                if($utilisateur){
+               
+                if($utilisateur && password_verify($mdp, $utilisateur->getMDP())){
                     if( $utilisateur->getEST_ADMIN() == 1 ){
                         $_SESSION["autorisation"] = "emp";
                         header("Location: index.php?uc=utilisateur&action=liste");
