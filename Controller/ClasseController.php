@@ -47,7 +47,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                         Classe::ajoutClasseEleve($idClasse, $ideleve);
 
                     }
-                    $_SESSION['message'] = "Classe créée avec succès et élèves ajoutés.";
+                    $_SESSION['Sucess'] = "Classe créée avec succès et élèves ajoutés.";
                     header("Location: index.php?uc=classe&action=affichage");
                     exit();
                 }
@@ -62,7 +62,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                     Classe::supprimerClasse($idClasse);
                     $_SESSION['message'] = "Classe supprimée avec succès.";
                 }
-                $_SESSION['message'] = "Classe supprimer avec succès";
+                $_SESSION['Sucess'] = "Classe supprimer avec succès";
                 header("Location: index.php?uc=classe&action=affichage");
                 exit();
                 break;
@@ -78,13 +78,13 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] == "emp") {
                     foreach($idEleve as $eleve){
                         Classe::ajoutClasseEleve($idClasse, $eleve);
                     }
-                    $_SESSION['message'] = "Classe modifier avec succès ";
+                    $_SESSION['Sucess'] = "Classe modifier avec succès ";
                     header("Location: index.php?uc=classe&action=affichage");
                     exit();
                 }
 
                 else{
-                    $_SESSION['message'] = "Classe supprimer avec succès";
+                    $_SESSION['Sucess'] = "Classe supprimer avec succès";
                     header("Location: index.php?uc=classe&action=supprimer&idClasse=$idClasse");
                     exit();
                 }

@@ -13,11 +13,15 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
                 break;
 
             case "ajouter":
+
                 $lesInstruments = Instrument::getAll();
+
+                
 
                 $idInstruments = filter_input(INPUT_POST, 'idInstrument', FILTER_SANITIZE_NUMBER_INT);
                 $dateSeance = filter_input(INPUT_POST, 'dateSeance', FILTER_SANITIZE_STRING);
 
+                
                 if ($idInstruments && !$dateSeance) {
                     $date = new DateTime();
                     $formattedDate = $date->format('Y-m-d\TH:i');
@@ -42,7 +46,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
                     $classesDisponibles = Classe::getClassesDisponibles($idInstruments, $dateSeance);
                 }
 
-                $idProfesseur = filter_input(INPUT_POST, 'idProfesseur', FILTER_SANITIZE_NUMBER_INT);
+                $idProfesseur = filter_input(INPUT_POST, 'idProfesseur', FILTER_SANITIZE_STRING);
                 $idClasse = filter_input(INPUT_POST, 'idClasse', FILTER_SANITIZE_NUMBER_INT);
 
                 if ($idInstruments && $dateSeance && $idProfesseur && $idClasse) {
@@ -64,12 +68,12 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
                     }
 
                     Seance::ajouterSeance($idProfesseur, $idClasse, $dateSeance);
-                    $_SESSION["message"] = "Seance bien créer";
+                    $_SESSION['Sucess'] = "Seance bien créer";
                     header("Location: index.php?uc=seance&action=liste");
                     break;
                     exit();
                 }
-
+                
                 include("Vue/Cours/formAjoutSeance.php");
                 break;
             
@@ -78,7 +82,7 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
                     if ($idSeance !== false && $idSeance !== null) {
                         Seance::supprimerSeance($idSeance);
                     }
-                    $_SESSION["message"] = "Seance bien supprimer";
+                    $_SESSION['Sucess'] = "Seance bien supprimer";
                     header("Location: index.php?uc=seance&action=liste");
                     exit();
                     break;
@@ -99,9 +103,17 @@ if (isset($_SESSION["autorisation"]) && $_SESSION["autorisation"] === "emp") {
         }
     } catch (Exception $e) {
         $_SESSION['message'] = "Erreur : " . $e->getMessage();
-        echo($e->getMessage());
+        header("Location: index.php?uc=seance&action=liste");
     }
 } else {
     include("Vue/formAuth.php");
+}
+function verificationDate($date) {
+
+    if (!preg_match("/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/", $date)) {
+        $erreurs['date'] = "La date est incorrecte.";
+        return false;
+    }
+    return true;
 }
 ?>

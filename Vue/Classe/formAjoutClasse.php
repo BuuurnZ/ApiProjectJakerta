@@ -13,6 +13,12 @@ else{
         </div>
         <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
+    <?php if (!empty($_SESSION['Sucess'])): ?>
+        <div class="m-2 bg-green-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
+            <?php echo $_SESSION['Sucess']; ?>
+        </div>
+        <?php unset($_SESSION['Sucess']); ?>
+    <?php endif; ?>
 
     <div class="sm:ml-40">
         <form id="instrumentForm" class="mt-8 sm:mt-0 md:mt-0 lg:mt-0 ml-4 sm:ml-8 md:ml-16 lg:ml-24 max-w-lg" action="index.php?uc=classe&action=creation" method="post">

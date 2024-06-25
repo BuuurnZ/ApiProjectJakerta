@@ -12,6 +12,12 @@ else{
         </div>
         <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
+    <?php if (!empty($_SESSION['Sucess'])): ?>
+        <div class="m-2 bg-green-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
+            <?php echo $_SESSION['Sucess']; ?>
+        </div>
+        <?php unset($_SESSION['Sucess']); ?>
+    <?php endif; ?>
 
     <div class="flex items-center justify-between p-4 bg-white">
         <div class="flex items-center w-full md:w-auto transition-all duration-300"> 
@@ -34,9 +40,10 @@ else{
      
     <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
         <?php
+        if(isset($lesClasses)){
+
         foreach ($lesClasses as $classe) {
 
-            //var_dump($classe);
             $nombreEleves = count($classe->getEleves());
         ?>
             <div class="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
@@ -66,6 +73,8 @@ else{
             </div>
         <?php
         }
+    }
+
         ?>
     </div>
 </div>

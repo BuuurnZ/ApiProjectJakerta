@@ -12,8 +12,14 @@ else{
         <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
 
+    <?php if (!empty($_SESSION['Sucess'])): ?>
+        <div class="m-2 bg-green-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
+            <?php echo $_SESSION['Sucess']; ?>
+        </div>
+        <?php unset($_SESSION['Sucess']); ?>
+    <?php endif; ?>
 
-<section style="background-image: url('Images/music.jpg');" class="bg-cover min-h-screen flex items-center justify-center bg-violet-600">
+<section class="bg-cover min-h-screen flex items-center justify-center bg-violet-600">
 
 
 
@@ -22,12 +28,13 @@ else{
             <div class="mb-4">
                 <label for="idInstrument" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Instrument:</label>
                 <select id="idInstrument" name="idInstrument" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" required onchange="submitForm()">
+                <option value="" >Séléctionner un instrument</option>
 
-                    <?php foreach ($lesInstruments as $instrument): ?>
-                        <option value="<?= $instrument->getIDINSTRUMENT() ?>" <?= (isset($idInstruments) && $idInstruments == $instrument->getIDINSTRUMENT()) ? 'selected' : '' ?>>
-                            <?= $instrument->getLIBELLE() ?>
-                        </option>
-                    <?php endforeach; ?>
+                <?php foreach ($lesInstruments as $instrument): ?>
+                    <option value="<?= $instrument->getIDINSTRUMENT() ?>" <?php if ($instrument->getIDINSTRUMENT() == $idInstruments) { echo 'selected'; } ?>>
+                        <?= $instrument->getLIBELLE() ?>
+                    </option>
+                <?php endforeach; ?>
                 </select>
             </div>
         
@@ -77,7 +84,7 @@ else{
                     <label for="idClasse" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Classe:</label>
                     <select id="idClasse" name="idClasse" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
                         <option value="" disabled selected>Classe disponible pour le cours</option>
-                        <!-- Remplir avec les instruments disponibles -->
+
                         <?php foreach ($classesDisponibles as $classe): ?>
                             <option value="<?= $classe->getIDCLASSE() ?>">
                                 <?= "Classe {$classe->getIDCLASSE()}" ?>

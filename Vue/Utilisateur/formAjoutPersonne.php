@@ -5,7 +5,7 @@ if($_SESSION["autorisation"] == "emp"){
 else{
   include("Vue/navbarEleveProf.php");
 }  ?>
-<section style="background-image: url('Images/music.jpg');" class="bg-cover min-h-screen flex items-center justify-center bg-violet-600">
+<section style="" class="bg-cover min-h-screen flex items-center justify-center ">
     <div class="w-full sm:max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
         <form id="form" class="mt-10" action="index.php?uc=utilisateur&action=inscription" method="post">
             <div class="mb-4">
@@ -13,10 +13,10 @@ else{
                     Rôle
                 </label>
                 <select id="role" name="role" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
-                    <option value="">Sélectionner un rôle</option>
-                    <option value="1" >Admin</option>
-                    <option value="2" >Élève</option>
-                    <option value="3" >Professeur</option>
+                    <option value="1" <?php if ($role == 1 || ($role === "")) echo 'selected'; ?>>Admin</option>
+                    <option value="2" <?php if ($role == 2) echo 'selected'; ?>>Élève</option>
+                    <option value="3" <?php if ($role == 3) echo 'selected'; ?>>Professeur</option>
+
                 </select>
                 <?php if (!empty($_SESSION['erreurs']['role'])): ?>
                     <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['role']; ?></p>
@@ -60,7 +60,7 @@ else{
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="mdp">
                     Mot de passe
                 </label>
-                <input name="mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="mdp" type="password" placeholder="••••••••" required>
+                <input name="mdp" value="<?php echo htmlspecialchars($mdp ?? ''); ?>" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="mdp" type="password" placeholder="••••••••" required>
                 <?php if (!empty($_SESSION['erreurs']['mdp'])): ?>
                     <p class="text-red-500 text-xs italic"><?php echo $_SESSION['erreurs']['mdp']; ?></p>
                 <?php endif; ?>

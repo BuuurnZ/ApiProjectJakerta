@@ -12,6 +12,7 @@ else{
         </div>
         <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
+    
     <?php if (!empty($_SESSION['Sucess'])): ?>
         <div class="m-2 bg-green-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
             <?php echo $_SESSION['Sucess']; ?>
@@ -66,7 +67,7 @@ else{
                                 <i class="fas fa-eye h-4 w-4"></i>
                                 <span class="ml-2 text-white text-xs font-medium">Élève</span>
                             </a>
-                            <a class="flex items-center bg-red-500 h-10 px-3 rounded hover:bg-gray-300" href="index.php?uc=seance&action=supprimer&idSeance=<?= $cours->getIdSeance() ?>"  onclick="confirmDeletion(event)">
+                            <a class="flex items-center bg-red-500 h-10 px-3 rounded hover:bg-gray-300" href="index.php?uc=seance&action=supprimer&idSeance=<?= $cours->getIdSeance() ?>" >
                                 <i class="fas fa-trash-alt h-4 w-4"></i>
                                 <span class="ml-2 text-white text-xs font-medium">Supprimer</span>
                             </a>
@@ -76,10 +77,4 @@ else{
             <?php } ?>
         </div>
     </div>
-    <script>
-        function confirmDeletion() {
-            return confirm('Êtes-vous sûr de vouloir supprimer l\'utilisateur ?');
-        }
-    </script>
-
     <?php include("Vue/footer.php"); ?>

@@ -11,7 +11,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Conservatoire</title>
     <link href="./dist/styles.css" rel="stylesheet" type="text">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
     
 </head>
 <body class="flex flex-col min-h-screen">

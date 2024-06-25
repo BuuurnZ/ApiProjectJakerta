@@ -18,15 +18,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
                 <span class="ml-2 text-sm font-medium">Accueil</span>
-            </a>
-            <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=<?=$_SESSION["autorisation"]?>&action=ajouter">
-				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-					<circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line>
-					<line x1="23" y1="11" x2="17" y2="11"></line>
-				</svg>
-				<span class="ml-3 text-sm font-medium"> Créer Seance</span>
-			</a>		
+            </a>	
         </div>
     </div>
 
@@ -49,7 +41,7 @@
     </button>
 
 
-    <div id="dropdown-menu" class="hidden flex flex-col items-center w-40 bg-gray-100 rounded shadow-lg absolute top-12 right-0 z-20">
+    <div id="dropdown-menu" class="hiddenflex flex-col items-center w-40 bg-gray-100 rounded shadow-lg absolute top-12 right-0 z-20">
 
         <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=<?=$_SESSION["autorisation"]?>&action=liste">
             <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -57,14 +49,6 @@
             </svg>
             <span class="ml-2 text-sm font-medium">Accueil</span>
         </a>
-        <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=<?=$_SESSION["autorisation"]?>&action=ajouter">
-				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-					<circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line>
-					<line x1="23" y1="11" x2="17" y2="11"></line>
-				</svg>
-			<span class="ml-3 text-sm font-medium"> Créer Seance</span>
-		</a>
 
 		<a class="flex items-center justify-center w-full h-16 mt-auto bg-gray-200 hover:bg-gray-300" href="index.php?uc=utilisateur&action=deconnexion">
         	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

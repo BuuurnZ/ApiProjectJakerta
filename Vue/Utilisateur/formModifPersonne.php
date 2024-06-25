@@ -13,7 +13,12 @@ else{
         </div>
         <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
-
+    <?php if (!empty($_SESSION['Sucess'])): ?>
+        <div class="m-2 bg-green-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
+            <?php echo $_SESSION['Sucess']; ?>
+        </div>
+        <?php unset($_SESSION['Sucess']); ?>
+    <?php endif; ?>
     <div class="w-full max-w-lg mx-auto bg-white rounded-lg shadow-md">
         <form id="form" class="mt-10 px-6 py-8" action="index.php?uc=utilisateur&action=modifier&idutilisateur=<?= $utilisateur->getIDUTILISATEUR() ?>" method="post">
 
@@ -56,14 +61,14 @@ else{
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="mdp">
                     Mot de passe
                 </label>
-                <input id="mdp" name="mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="password" placeholder="••••••••">
+                <input id="mdp" name="mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="password" placeholder="••••••••" value="<?= $utilisateur->getMDP() ?>" required>
             </div>
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm_mdp">
                     Confirmer Mot de passe
                 </label>
-                <input id="confirm_mdp" name="confirm_mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="password" placeholder="••••••••">
+                <input id="confirm_mdp" name="confirm_mdp" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="password" placeholder="••••••••" value="<?= $utilisateur->getMDP() ?>" required>
                 <p id="mdp_error" class="text-red-500 text-xs italic" style="display: none;">Les mots de passe ne correspondent pas.</p>
             </div>
 

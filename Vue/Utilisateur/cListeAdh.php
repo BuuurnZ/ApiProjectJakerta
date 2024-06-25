@@ -10,7 +10,12 @@ if($_SESSION["autorisation"] == "emp"){
             </div>
             <?php unset($_SESSION['message']); ?>
         <?php endif; ?>
-
+        <?php if (!empty($_SESSION['Sucess'])): ?>
+        <div class="m-2 bg-green-200 text-white font-semibold flex justify-center p-4 rounded-md" role="alert" data-auto-dismiss="2000">
+            <?php echo $_SESSION['Sucess']; ?>
+        </div>
+        <?php unset($_SESSION['Sucess']); ?>
+    <?php endif; ?>
     <div class="flex items-center justify-between p-4 bg-white">
         <div class="flex items-center w-full md:w-auto transition-all duration-300"> 
                 <div class="relative">

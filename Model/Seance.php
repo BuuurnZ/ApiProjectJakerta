@@ -63,7 +63,7 @@ class Seance
             ");
             $reqInsertSeance->bindParam(':idProfesseur', $idProfesseur, PDO::PARAM_STR);
             $reqInsertSeance->bindParam(':idClasse', $idClasse, PDO::PARAM_INT);
-            $reqInsertSeance->bindParam(':date', $date);
+            $reqInsertSeance->bindParam(':date', $date,);
             $reqInsertSeance->bindParam(':heureDebut', $heureDebut);
             $reqInsertSeance->bindParam(':heureFin', $heureFin);
             $reqInsertSeance->execute();
@@ -127,6 +127,7 @@ class Seance
     }
 
     public static function verifInstrumentProfEtClasse($idClasse, $idProfesseur){
+
         try {
             $pdo = MonPdo::getInstance();
             $reqVerifInstrument = $pdo->prepare("
@@ -177,25 +178,7 @@ class Seance
             throw new Exception("Erreur vérification conflit classe et professeur" );
         }
     }
-    /**
-     * Get the value of idSeance
-     */ 
-    public function getIdSeance()
-    {
-        return $this->idSeance;
-    }
-
-    /**
-     * Set the value of idSeance
-     *
-     * @return  self
-     */ 
-    public function setIdSeance($idSeance)
-    {
-        $this->idSeance = $idSeance;
-
-        return $this;
-    }
+    
 
     /**
      * Get the value of idProfesseur
@@ -356,5 +339,25 @@ class Seance
 
 		return $this;
 	}
+
+    /**
+     * Get the value of idSeance
+     */ 
+    public function getIdSeance()
+    {
+        return $this->idSeance;
+    }
+
+    /**
+     * Set the value of idSeance
+     *
+     * @return  self
+     */ 
+    public function setIdSeance($idSeance)
+    {
+        $this->idSeance = $idSeance;
+
+        return $this;
+    }
 }
 ?>

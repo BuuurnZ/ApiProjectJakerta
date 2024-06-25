@@ -31,13 +31,12 @@ class Utilisateur
 		unset($_SESSION['autorisation']);
     }
 
-    public static function checkConnexion($login, $pw) {
+    public static function tentativeConnexion($login, $mdpHash) {
         try {
 
-            //$pwHash = password_hash($pw, PASSWORD_BCRYPT);
-            $req = MonPdo::getInstance()->prepare("SELECT * FROM utilisateur WHERE mail = :login");
-            $req->bindParam(':login', $login, PDO::PARAM_STR);
-            //$req->bindParam(':mdp', $pwHash, PDO::PARAM_STR);
+            $req = MonPdo::getInstance()->prepare("SELECT * FROM utilisateur WHERE mail = :mail");
+            $req->bindParam(':mail', $login, PDO::PARAM_STR);
+            //$req->bindParam(':mdp', $mdpHash, PDO::PARAM_STR);
             $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Utilisateur');
             $req->execute();
             $user = $req->fetch();
@@ -45,7 +44,7 @@ class Utilisateur
             return $user; 
         
         } catch (PDOException $e) {
-            throw new Exception("Erreur lors de la vérification de la connexion : " . $e->getMessage());
+            throw new Exception("Erreur lors de la vérification de la connexion");
         }
     }
   
@@ -63,7 +62,9 @@ class Utilisateur
             $telephone = $utilisateur->getTelephone();
             $adresse = $utilisateur->getAdresse();
             $mail = $utilisateur->getMail();
+
             $mdp = password_hash($utilisateur->getMdp(), PASSWORD_BCRYPT);
+            
             $est_admin = $utilisateur->getEST_ADMIN();
     
             $req->bindParam(':id', $uid);
@@ -348,7 +349,7 @@ class Utilisateur
      */ 
     public function getNOM()
     {
-        return $this->NOM;
+        return htmlspecialchars($this->NOM);
     }
 
     /**

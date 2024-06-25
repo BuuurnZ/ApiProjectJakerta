@@ -26,31 +26,23 @@
 					<span class="ml-3 text-sm font-medium"> Créer Seance</span>
 			</a>
 
-            <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=instrument&action=liste">
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-						<circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line>
-						<line x1="23" y1="11" x2="17" y2="11"></line>
-					</svg>
-					<span class="ml-3 text-sm font-medium"> Instrument </span>
-			</a>
-            
-
             <div class="w-full mt-2">
                 <button class="flex items-center w-full h-12 px-3 rounded hover:bg-gray-300" id="class-dropdown-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line>
-                        <line x1="23" y1="11" x2="17" y2="11"></line>
-                    </svg>
+                <img src="Images/clipboard.png" alt="Icône Liste Classe" class="mr-2">  
                     <span class="ml-3 text-sm font-medium">Classes</span>
                 </button>
                 <div id="class-dropdown" class="hidden flex-col w-full">
                     <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=classe&action=affichage">
-                        <span class="ml-12 text-sm font-medium">Liste Classe</span>
+                        <img src="Images/list.png" alt="Icône Liste Classe" class="mr-2">  
+                        <span class="text-sm font-medium">Liste Classe</span>
                     </a>
                     <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=classe&action=creation">
-                        <span class="ml-12 text-sm font-medium">Créer Classe</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        <span class="text-sm font-medium">Créer Classe</span>
                     </a>
                 </div>
             </div>
@@ -58,19 +50,21 @@
 
             <div class="w-full mt-2">
                 <button class="flex items-center w-full h-12 px-3 rounded hover:bg-gray-300" id="adherent-dropdown-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line>
-                        <line x1="23" y1="11" x2="17" y2="11"></line>
-                    </svg>
+                <img src="Images/clipboard.png" alt="Icône Liste Classe" class="mr-2">  
                     <span class="ml-3 text-sm font-medium">Adhérents</span>
                 </button>
-                <div id="adherent-dropdown" class="hidden flex-col w-full">
+                <div id="adherent-dropdown" class="flex-col w-full">
                     <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=utilisateur&action=liste">
-                        <span class="ml-12 text-sm font-medium">Liste Adhérents</span>
+                        <img src="Images/list.png" alt="Icône Liste Adhérents">  
+                        <span class="text-sm font-medium ml-2">Liste Adhérents</span>
                     </a>
                     <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=utilisateur&action=formInscription">
-                        <span class="ml-12 text-sm font-medium">Ajouter Adhérent</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        <span class="text-sm font-medium ml-2">Ajouter Adhérent</span>
                     </a>
                 </div>
             </div>
@@ -124,6 +118,7 @@
             </button>
             <div id="class-dropdown-mobile" class="hidden flex-col w-full">
                 <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=classe&action=affichage">
+                
                     <span class="ml-12 text-sm font-medium">Liste Classe</span>
                 </a>
                 <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="index.php?uc=classe&action=creation">

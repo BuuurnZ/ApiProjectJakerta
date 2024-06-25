@@ -104,6 +104,27 @@ class Eleve extends Utilisateur
             throw new Exception("Erreur lors de l'ajout professeur' " );
         }
     }
+    public static function recuperationSeance($idUtilisateur){
+        try {
+            $pdo = MonPdo::getInstance();
+            $req = $pdo->prepare("SELECT S.idSeance
+            FROM SEANCE S
+            JOIN PROFESSEUR P ON S.IDPROFESSEUR = P.IDPROFESSEUR
+            JOIN CLASSE C ON S.IDCLASSE = C.IDCLASSE
+            JOIN CLASSE_ELEVE CE ON C.IDCLASSE = CE.IDCLASSE
+            JOIN ELEVE E ON CE.IDELEVE = E.IDELEVE
+            JOIN UTILISATEUR U ON E.IDUTILISATEUR = U.IDUTILISATEUR
+            WHERE U.IDUTILISATEUR = :idutilisateur;");
+            $req->bindParam(':idutilisateur', $idUtilisateur, PDO::PARAM_STR);
+            $req->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'seance');
+            $req->execute();
+            $lesResultats = $req->fetchAll();
+            return $lesResultats;
+
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la récupération de la séance" );
+        }
+    }
     public static function fromUtilisateur(Utilisateur $utilisateur, $ideleve) {
         return new self(
             $ideleve,
